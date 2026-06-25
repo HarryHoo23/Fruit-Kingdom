@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../assets/fonts/nunito-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../assets/fonts/nunito-latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 900;
+  src: url("../assets/fonts/nunito-latin-900-normal.woff2") format("woff2");
+}
+
+@layer base {
+  :root {
+    --animal-primary-color: theme("colors.fruit.inputFocus");
+    --animal-text-color: theme("colors.fruit.brown");
+    --animal-text-soft: theme("colors.fruit.soft");
+    --animal-border-color: theme("colors.fruit.border");
+    --animal-border-light: theme("colors.fruit.borderLight");
+    --animal-bg: theme("colors.fruit.paper");
+    --animal-cream: theme("colors.fruit.cream");
+    color: var(--animal-text-color);
+    background: theme("colors.fruit.grass");
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    cursor:
+      url("../assets/img/cursor-icon.png") 8 4,
+      auto;
+  }
+
+  button {
+    cursor: inherit;
+  }
+}
