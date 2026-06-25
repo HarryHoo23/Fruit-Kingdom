@@ -1,11 +1,14 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AnimalButton } from "../components/AnimalButton";
 import { AnimalCard, type AnimalCardPattern } from "../components/AnimalCard";
 import { characters } from "../features/characters/characterData";
 import { regions } from "../features/regions/regionData";
 import { StoryForm } from "../features/stories/StoryForm";
+import { getCurrentStoryLanguage, getStoryText } from "../features/stories/storyText";
 import { useStories } from "../hooks/useStories";
+import { toTranslationKey } from "../i18n/keys";
 import type { RegionId, Story, StoryDraft } from "../types/domain";
 
 const storyPatterns: AnimalCardPattern[] = ["pink", "yellow", "teal", "purple", "green", "orange"];
@@ -14,6 +17,8 @@ const patternForIndex = (index: number): AnimalCardPattern =>
   storyPatterns[index % storyPatterns.length];
 
 export const RegionPage = () => {
+  const { i18n, t } = useTranslation();
+  const storyLanguage = getCurrentStoryLanguage(i18n.resolvedLanguage);
   const { regionId } = useParams<{ regionId: RegionId }>();
   const region = regions.find((item) => item.id === regionId);
   const character = characters.find((item) => item.id === region?.characterId);
@@ -22,8 +27,8 @@ export const RegionPage = () => {
   const [editingStory, setEditingStory] = useState<Story | null>(null);
 
   const formTitle = useMemo(
-    () => (editingStory ? "Edit bedtime story" : "Add a bedtime story"),
-    [editingStory],
+    () => (editingStory ? t("stories.editStoryTitle") : t("stories.addStoryTitle")),
+    [editingStory, t],
   );
 
   if (!region || !character) {
@@ -31,9 +36,9 @@ export const RegionPage = () => {
       <section className="px-[clamp(16px,4vw,48px)] pb-14 pt-8">
         <AnimalCard>
           <h1 className="mb-3 text-[clamp(44px,7vw,82px)] font-black leading-none text-fruit-parchment text-shadow-fruit">
-            Region not found
+            {t("common.regionNotFound")}
           </h1>
-          <Link to="/">Return to the kingdom map</Link>
+          <Link to="/">{t("common.returnToMap")}</Link>
         </AnimalCard>
       </section>
     );
@@ -55,7 +60,7 @@ export const RegionPage = () => {
         className="mb-[18px] inline-flex rounded-[14px] bg-fruit-parchment/80 px-3.5 py-2 font-black text-fruit-text"
         to="/"
       >
-        ← Kingdom map
+        {t("common.kingdomMapBack")}
       </Link>
       <div
         className={`mb-[22px] grid grid-cols-[minmax(220px,360px)_minmax(0,1fr)] items-center gap-[clamp(22px,5vw,62px)] rounded-fruit-lg border-8 border-fruit-parchment/55 ${region.theme.heroBg} p-[clamp(22px,4vw,44px)] shadow-fruit-lg max-[880px]:grid-cols-1`}
@@ -71,12 +76,14 @@ export const RegionPage = () => {
         </div>
         <div>
           <p className="mb-2 text-[13px] font-black uppercase tracking-[0.05em] text-fruit-primary">
-            {region.unlocked ? "Unlocked region" : "Coming soon"}
+            {region.unlocked ? t("common.unlockedRegion") : t("common.comingSoon")}
           </p>
           <h1 className="mb-3 text-[clamp(44px,7vw,82px)] font-black leading-none text-fruit-parchment text-shadow-fruit">
-            {region.name}
+            {t(`regions.${toTranslationKey(region.id)}.name`)}
           </h1>
-          <p className="text-[17px] leading-[1.7] text-fruit-muted">{region.description}</p>
+          <p className="text-[17px] leading-[1.7] text-fruit-muted">
+            {t(`regions.${toTranslationKey(region.id)}.description`)}
+          </p>
         </div>
       </div>
 
@@ -87,13 +94,15 @@ export const RegionPage = () => {
           </div>
           <div>
             <p className="mb-2 text-[13px] font-black uppercase tracking-[0.05em] text-fruit-primary">
-              Main character
+              {t("common.mainCharacter")}
             </p>
             <h2 className="mb-2.5 text-[26px] font-black leading-[1.15] text-fruit-text">
-              {character.name}
+              {t(`characters.${toTranslationKey(character.id)}.name`)}
             </h2>
-            <strong>{character.personality}</strong>
-            <p className="text-[17px] leading-[1.7] text-fruit-muted">{character.introduction}</p>
+            <strong>{t(`characters.${toTranslationKey(character.id)}.personality`)}</strong>
+            <p className="text-[17px] leading-[1.7] text-fruit-muted">
+              {t(`characters.${toTranslationKey(character.id)}.introduction`)}
+            </p>
           </div>
         </AnimalCard>
 
@@ -101,10 +110,10 @@ export const RegionPage = () => {
           <div className="flex items-center justify-between gap-3.5 max-[560px]:grid max-[560px]:items-start">
             <div>
               <p className="mb-2 text-[13px] font-black uppercase tracking-[0.05em] text-fruit-primary">
-                Memory book
+                {t("common.memoryBook")}
               </p>
               <h2 className="mb-2.5 text-[26px] font-black leading-[1.15] text-fruit-text">
-                Stories
+                {t("stories.title")}
               </h2>
             </div>
             <AnimalButton
@@ -113,7 +122,7 @@ export const RegionPage = () => {
                 setFormOpen(true);
               }}
             >
-              + Add Story
+              {t("stories.addStory")}
             </AnimalButton>
           </div>
 
@@ -132,42 +141,48 @@ export const RegionPage = () => {
             </AnimalCard>
           )}
 
-          {loading && <p className="font-extrabold text-fruit-soft">Loading stories...</p>}
-          {error && <p className="font-extrabold text-fruit-soft">{error}</p>}
+          {loading && <p className="font-extrabold text-fruit-soft">{t("stories.loading")}</p>}
+          {error && <p className="font-extrabold text-fruit-soft">{t(error)}</p>}
           {!loading && stories.length === 0 && (
-            <p className="font-extrabold text-fruit-soft">No stories here yet.</p>
+            <p className="font-extrabold text-fruit-soft">{t("stories.noStories")}</p>
           )}
 
           <div className="grid gap-3">
-            {stories.map((story, index) => (
-              <AnimalCard
-                className="flex items-start justify-between gap-3.5 max-[560px]:grid max-[560px]:items-start"
-                key={story.id}
-                pattern={patternForIndex(index)}
-              >
-                <div>
-                  <h3 className="mb-1.5 text-xl font-black text-fruit-text">{story.title}</h3>
-                  <p className="text-[17px] leading-[1.7] text-fruit-muted">{story.summary}</p>
-                  <span className="mt-2 inline-flex rounded-full bg-fruit-paper/55 px-2.5 py-1 text-[13px] font-black text-fruit-text">
-                    {story.moralLesson}
-                  </span>
-                </div>
-                <div className="flex gap-2 max-[560px]:grid max-[560px]:w-full max-[560px]:grid-cols-2">
-                  <AnimalButton
-                    variant="soft"
-                    onClick={() => {
-                      setEditingStory(story);
-                      setFormOpen(true);
-                    }}
-                  >
-                    Edit
-                  </AnimalButton>
-                  <AnimalButton variant="danger" onClick={() => void deleteStory(story.id)}>
-                    Delete
-                  </AnimalButton>
-                </div>
-              </AnimalCard>
-            ))}
+            {stories.map((story, index) => {
+              const storyText = getStoryText(story, storyLanguage);
+
+              return (
+                <AnimalCard
+                  className="flex items-start justify-between gap-3.5 max-[560px]:grid max-[560px]:items-start"
+                  key={story.id}
+                  pattern={patternForIndex(index)}
+                >
+                  <div>
+                    <h3 className="mb-1.5 text-xl font-black text-fruit-text">{storyText.title}</h3>
+                    <p className="text-[17px] leading-[1.7] text-fruit-muted">
+                      {storyText.summary}
+                    </p>
+                    <span className="mt-2 inline-flex rounded-full bg-fruit-paper/55 px-2.5 py-1 text-[13px] font-black text-fruit-text">
+                      {storyText.moralLesson}
+                    </span>
+                  </div>
+                  <div className="flex gap-2 max-[560px]:grid max-[560px]:w-full max-[560px]:grid-cols-2">
+                    <AnimalButton
+                      variant="soft"
+                      onClick={() => {
+                        setEditingStory(story);
+                        setFormOpen(true);
+                      }}
+                    >
+                      {t("stories.edit")}
+                    </AnimalButton>
+                    <AnimalButton variant="danger" onClick={() => void deleteStory(story.id)}>
+                      {t("stories.delete")}
+                    </AnimalButton>
+                  </div>
+                </AnimalCard>
+              );
+            })}
           </div>
         </AnimalCard>
       </div>

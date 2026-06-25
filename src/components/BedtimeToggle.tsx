@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useBedtime } from "../hooks/useBedtime";
 
 export const BedtimeToggle = () => {
   const { bedtime, setBedtime } = useBedtime();
+  const { t } = useTranslation();
 
   return (
     <button
@@ -14,7 +16,7 @@ export const BedtimeToggle = () => {
       type="button"
       role="switch"
       aria-checked={bedtime}
-      aria-label="Bedtime mode"
+      aria-label={t("bedtime.ariaLabel")}
       onClick={() => setBedtime(!bedtime)}
     >
       <span
@@ -26,7 +28,7 @@ export const BedtimeToggle = () => {
       >
         {bedtime ? "🌙" : "☀️"}
       </span>
-      <span>{bedtime ? "Bedtime" : "Daytime"}</span>
+      <span>{bedtime ? t("bedtime.bedtime") : t("bedtime.daytime")}</span>
     </button>
   );
 };

@@ -1,0 +1,159 @@
+export const en = {
+  common: {
+    appName: "Fruit Kingdom",
+    map: "Map",
+    stickers: "Stickers",
+    language: "Language",
+    english: "English",
+    chinese: "中文",
+    welcomeBack: "Welcome back, Hailey",
+    goodNight: "Good night Hailey 🌙",
+    heroSubtitle: "Choose a fruit region and open tonight's soft little adventure.",
+    kingdomMap: "Fruit Kingdom map",
+    unlockedRegion: "Unlocked region",
+    comingSoon: "Coming soon",
+    mainCharacter: "Main character",
+    memoryBook: "Memory book",
+    kingdomMapBack: "← Kingdom map",
+    regionNotFound: "Region not found",
+    returnToMap: "Return to the kingdom map",
+  },
+  bedtime: {
+    ariaLabel: "Bedtime mode",
+    bedtime: "Bedtime",
+    daytime: "Daytime",
+  },
+  regions: {
+    appleForest: {
+      name: "Apple Forest",
+      description: "A rustling orchard where little lanterns glow between sleepy red trees.",
+    },
+    strawberryCastle: {
+      name: "Strawberry Castle",
+      description: "A soft pink castle with jam-bright banners and giggly garden paths.",
+    },
+    bananaBeach: {
+      name: "Banana Beach",
+      description: "A sunny shore where golden boats nap beside pearly seashells.",
+    },
+    watermelonLake: {
+      name: "Watermelon Lake",
+      description: "A glassy green lake with lily pads big enough for bedtime picnics.",
+    },
+    grapeValley: {
+      name: "Grape Valley",
+      description: "A twilight valley where old vines curl into secret spell shapes.",
+    },
+    kiwiRainforest: {
+      name: "Kiwi Rainforest",
+      description: "A bright rainforest filled with curious maps, mossy steps, and tiny bridges.",
+    },
+    orangeVolcano: {
+      name: "Orange Volcano",
+      description: "A warm volcano that puffs cinnamon clouds instead of smoke.",
+    },
+    coconutIsland: {
+      name: "Coconut Island",
+      description: "A bobbing island with palm hammocks, message bottles, and moonlit docks.",
+    },
+  },
+  characters: {
+    appleKing: {
+      name: "Apple King",
+      personality: "Gentle, brave, and fond of bedtime parades.",
+      introduction:
+        "Apple King keeps the orchard lanterns glowing whenever Hailey visits after sunset.",
+    },
+    strawberryPrincess: {
+      name: "Strawberry Princess",
+      personality: "Kind, sparkly, and excellent at sharing tea cakes.",
+      introduction: "Strawberry Princess knows every secret tunnel beneath her jam-colored castle.",
+    },
+    bananaSheriff: {
+      name: "Banana Sheriff",
+      personality: "Cheerful, fair, and always ready to help.",
+      introduction: "Banana Sheriff patrols the beach on a tiny moon-yellow scooter.",
+    },
+    kiwiProfessor: {
+      name: "Kiwi Professor",
+      personality: "Curious, patient, and a little absent-minded.",
+      introduction: "Kiwi Professor studies rainbows, footprints, and why bedtime dreams sparkle.",
+    },
+    watermelonGiant: {
+      name: "Watermelon Giant",
+      personality: "Tender-hearted, slow-talking, and wonderfully strong.",
+      introduction: "Watermelon Giant carries tired travelers across the lake on a leafy raft.",
+    },
+    grapeWizard: {
+      name: "Grape Wizard",
+      personality: "Mysterious, silly, and wise in unexpected ways.",
+      introduction: "Grape Wizard keeps a book of spells that only opens for kind questions.",
+    },
+    orangeVolcanoKeeper: {
+      name: "Orange Volcano Keeper",
+      personality: "Warm, energetic, and protective.",
+      introduction:
+        "Orange Volcano Keeper listens to the mountain rumble and turns it into lullabies.",
+    },
+    coconutCaptain: {
+      name: "Coconut Captain",
+      personality: "Adventurous, steady, and full of sea stories.",
+      introduction: "Coconut Captain sails by starlight and collects wishes in tiny bottles.",
+    },
+  },
+  stories: {
+    title: "Stories",
+    recentTitle: "Recent Stories",
+    recentEyebrow: "Previously in Fruit Kingdom",
+    recentIntro: "A quick way to remember what happened in earlier bedtime adventures.",
+    reviewStory: "Review",
+    addStory: "+ Add Story",
+    addStoryTitle: "Add a bedtime story",
+    editStoryTitle: "Edit bedtime story",
+    updateStory: "Update Story",
+    saveStory: "Save Story",
+    saving: "Saving...",
+    cancel: "Cancel",
+    edit: "Edit",
+    delete: "Delete",
+    loading: "Loading stories...",
+    loadError: "Unable to load stories.",
+    noStories: "No stories here yet.",
+    titleLabel: "Story title",
+    summaryLabel: "Tiny summary",
+    contentLabel: "Bedtime story",
+    moralLabel: "Moral lesson",
+    englishVersion: "English version",
+    chineseVersion: "Chinese version",
+    primaryLanguage: "Primary story language",
+    fillPrimaryLanguage: "Fill all fields in the primary language to save.",
+  },
+  badges: {
+    heading: "Sticker Collection",
+    dayEyebrow: "Hailey earns stickers",
+    nightEyebrow: "Moonlit sticker book",
+    intro: "Little keepsakes for brave, kind, curious bedtime adventures.",
+    earned: "Earned",
+    hidden: "Still hiding",
+    courageStar: {
+      name: "Courage Star",
+      description: "Earned for trying something brave.",
+    },
+    kindnessHeart: {
+      name: "Kindness Heart",
+      description: "Earned for helping a friend feel seen.",
+    },
+    sharingRainbow: {
+      name: "Sharing Rainbow",
+      description: "Earned for making joy bigger by sharing it.",
+    },
+    wisdomBook: {
+      name: "Wisdom Book",
+      description: "Earned for asking a thoughtful question.",
+    },
+    sleepyMoon: {
+      name: "Sleepy Moon",
+      description: "Earned for closing an adventure with a peaceful heart.",
+    },
+  },
+};

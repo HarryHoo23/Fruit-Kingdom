@@ -13,7 +13,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { starterStories } from "../features/stories/storySeeds";
-import type { RegionId, Story, StoryDraft } from "../types/domain";
+import type {
+  RegionId,
+  Story,
+  StoryDraft,
+  StoryLanguage,
+  StoryTranslations,
+} from "../types/domain";
 
 const collectionName = "stories";
 
@@ -23,6 +29,8 @@ interface FirestoreStory {
   summary: string;
   content: string;
   moralLesson: string;
+  originalLanguage?: StoryLanguage;
+  translations?: StoryTranslations;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
@@ -39,6 +47,8 @@ const readLocalStories = (): Story[] => {
     >;
     return parsed.map((story) => ({
       ...story,
+      originalLanguage: story.originalLanguage,
+      translations: story.translations,
       createdAt: new Date(story.createdAt),
       updatedAt: new Date(story.updatedAt),
     }));
@@ -58,6 +68,8 @@ const mapFirestoreStory = (id: string, data: FirestoreStory): Story => ({
   summary: data.summary,
   content: data.content,
   moralLesson: data.moralLesson,
+  originalLanguage: data.originalLanguage,
+  translations: data.translations,
   createdAt: data.createdAt?.toDate() ?? new Date(),
   updatedAt: data.updatedAt?.toDate() ?? new Date(),
 });

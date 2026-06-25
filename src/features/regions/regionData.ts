@@ -3,9 +3,7 @@ import type { Region } from "../../types/domain";
 export const regions: Region[] = [
   {
     id: "apple-forest",
-    name: "Apple Forest",
     emoji: "🍎",
-    description: "A rustling orchard where little lanterns glow between sleepy red trees.",
     unlocked: true,
     characterId: "apple-king",
     mapPosition: { top: "18%", left: "17%" },
@@ -17,9 +15,7 @@ export const regions: Region[] = [
   },
   {
     id: "strawberry-castle",
-    name: "Strawberry Castle",
     emoji: "🍓",
-    description: "A soft pink castle with jam-bright banners and giggly garden paths.",
     unlocked: true,
     characterId: "strawberry-princess",
     mapPosition: { top: "22%", left: "57%" },
@@ -31,9 +27,7 @@ export const regions: Region[] = [
   },
   {
     id: "banana-beach",
-    name: "Banana Beach",
     emoji: "🍌",
-    description: "A sunny shore where golden boats nap beside pearly seashells.",
     unlocked: true,
     characterId: "banana-sheriff",
     mapPosition: { top: "59%", left: "12%" },
@@ -45,9 +39,7 @@ export const regions: Region[] = [
   },
   {
     id: "watermelon-lake",
-    name: "Watermelon Lake",
     emoji: "🍉",
-    description: "A glassy green lake with lily pads big enough for bedtime picnics.",
     unlocked: true,
     characterId: "watermelon-giant",
     mapPosition: { top: "51%", left: "42%" },
@@ -59,9 +51,7 @@ export const regions: Region[] = [
   },
   {
     id: "grape-valley",
-    name: "Grape Valley",
     emoji: "🍇",
-    description: "A twilight valley where old vines curl into secret spell shapes.",
     unlocked: true,
     characterId: "grape-wizard",
     mapPosition: { top: "43%", left: "73%" },
@@ -73,9 +63,7 @@ export const regions: Region[] = [
   },
   {
     id: "kiwi-rainforest",
-    name: "Kiwi Rainforest",
     emoji: "🥝",
-    description: "A bright rainforest filled with curious maps, mossy steps, and tiny bridges.",
     unlocked: false,
     characterId: "kiwi-professor",
     mapPosition: { top: "75%", left: "30%" },
@@ -87,9 +75,7 @@ export const regions: Region[] = [
   },
   {
     id: "orange-volcano",
-    name: "Orange Volcano",
     emoji: "🍊",
-    description: "A warm volcano that puffs cinnamon clouds instead of smoke.",
     unlocked: false,
     characterId: "orange-volcano-keeper",
     mapPosition: { top: "71%", left: "62%" },
@@ -101,9 +87,7 @@ export const regions: Region[] = [
   },
   {
     id: "coconut-island",
-    name: "Coconut Island",
     emoji: "🥥",
-    description: "A bobbing island with palm hammocks, message bottles, and moonlit docks.",
     unlocked: false,
     characterId: "coconut-captain",
     mapPosition: { top: "79%", left: "84%" },

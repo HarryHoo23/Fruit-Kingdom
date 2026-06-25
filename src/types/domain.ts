@@ -8,11 +8,20 @@ export type RegionId =
   | "orange-volcano"
   | "coconut-island";
 
+export type StoryLanguage = "en" | "zh";
+
+export interface StoryText {
+  title: string;
+  summary: string;
+  content: string;
+  moralLesson: string;
+}
+
+export type StoryTranslations = Partial<Record<StoryLanguage, StoryText>>;
+
 export interface Region {
   id: RegionId;
-  name: string;
   emoji: string;
-  description: string;
   unlocked: boolean;
   characterId: string;
   mapPosition: {
@@ -28,37 +37,28 @@ export interface Region {
 
 export interface Character {
   id: string;
-  name: string;
   emoji: string;
-  personality: string;
-  introduction: string;
   homeRegionId: RegionId;
 }
 
-export interface Story {
+export interface Story extends StoryText {
   id: string;
-  title: string;
   regionId: RegionId;
-  summary: string;
-  content: string;
-  moralLesson: string;
+  originalLanguage?: StoryLanguage;
+  translations?: StoryTranslations;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface StoryDraft {
-  title: string;
+export interface StoryDraft extends StoryText {
   regionId: RegionId;
-  summary: string;
-  content: string;
-  moralLesson: string;
+  originalLanguage?: StoryLanguage;
+  translations?: StoryTranslations;
 }
 
 export interface Sticker {
   id: string;
-  name: string;
   emoji: string;
-  description: string;
   earned: boolean;
   accent: {
     border: string;

@@ -12,8 +12,8 @@ export const useStories = (regionId?: RegionId) => {
     setError(null);
     try {
       setStories(await storyService.listStories(regionId));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load stories.");
+    } catch {
+      setError("stories.loadError");
     } finally {
       setLoading(false);
     }

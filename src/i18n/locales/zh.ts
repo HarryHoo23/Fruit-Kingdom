@@ -1,0 +1,159 @@
+import type { en } from "./en";
+
+export const zh: typeof en = {
+  common: {
+    appName: "水果王国",
+    map: "地图",
+    stickers: "贴纸",
+    language: "语言",
+    english: "English",
+    chinese: "中文",
+    welcomeBack: "欢迎回来，Hailey",
+    goodNight: "晚安，Hailey 🌙",
+    heroSubtitle: "选择一个水果地区，打开今晚温柔的小冒险。",
+    kingdomMap: "水果王国地图",
+    unlockedRegion: "已解锁地区",
+    comingSoon: "即将开放",
+    mainCharacter: "主要角色",
+    memoryBook: "回忆小书",
+    kingdomMapBack: "← 王国地图",
+    regionNotFound: "没有找到这个地区",
+    returnToMap: "回到王国地图",
+  },
+  bedtime: {
+    ariaLabel: "晚安模式",
+    bedtime: "晚安",
+    daytime: "白天",
+  },
+  regions: {
+    appleForest: {
+      name: "苹果森林",
+      description: "树叶轻轻沙沙响，小小灯笼在红苹果树之间发光。",
+    },
+    strawberryCastle: {
+      name: "草莓城堡",
+      description: "一座柔软的粉色城堡，果酱色旗帜在花园小路上轻轻摇晃。",
+    },
+    bananaBeach: {
+      name: "香蕉海滩",
+      description: "阳光洒满海岸，金黄色的小船在贝壳旁安静休息。",
+    },
+    watermelonLake: {
+      name: "西瓜湖",
+      description: "一面清亮的绿色湖水，睡前野餐的荷叶漂在月光里。",
+    },
+    grapeValley: {
+      name: "葡萄山谷",
+      description: "暮色里的山谷，老藤弯成一串串悄悄发光的魔法形状。",
+    },
+    kiwiRainforest: {
+      name: "奇异果雨林",
+      description: "明亮的雨林里藏着小地图、青苔台阶和细细的小桥。",
+    },
+    orangeVolcano: {
+      name: "橙子火山",
+      description: "一座暖呼呼的火山，喷出的不是烟，而是肉桂味的云。",
+    },
+    coconutIsland: {
+      name: "椰子岛",
+      description: "一座轻轻摇晃的小岛，有棕榈吊床、漂流瓶和月光码头。",
+    },
+  },
+  characters: {
+    appleKing: {
+      name: "苹果国王",
+      personality: "温柔、勇敢，也很喜欢睡前小游行。",
+      introduction: "每当 Hailey 在日落后来访，苹果国王都会点亮果园里的小灯笼。",
+    },
+    strawberryPrincess: {
+      name: "草莓公主",
+      personality: "善良、闪闪发亮，最会分享小茶点。",
+      introduction: "草莓公主知道果酱色城堡下面每一条秘密小通道。",
+    },
+    bananaSheriff: {
+      name: "香蕉警长",
+      personality: "开朗、公平，总是准备好帮助朋友。",
+      introduction: "香蕉警长骑着月黄色的小车，在海滩边温柔巡逻。",
+    },
+    kiwiProfessor: {
+      name: "奇异果博士",
+      personality: "好奇、有耐心，偶尔会把眼镜戴歪。",
+      introduction: "奇异果博士研究彩虹、脚印，还有为什么睡前的梦会闪闪发光。",
+    },
+    watermelonGiant: {
+      name: "西瓜巨人",
+      personality: "心很软，说话慢慢的，却有非常大的力气。",
+      introduction: "西瓜巨人会用叶子小筏，把累了的旅人轻轻送过湖面。",
+    },
+    grapeWizard: {
+      name: "葡萄魔法师",
+      personality: "有点神秘、很会逗笑，也常常说出温柔的智慧。",
+      introduction: "葡萄魔法师有一本魔法书，只有遇到善良的问题才会打开。",
+    },
+    orangeVolcanoKeeper: {
+      name: "橙子火山守护者",
+      personality: "热情、有活力，也很会保护大家。",
+      introduction: "橙子火山守护者会听山里的咕噜声，把它们变成睡前摇篮曲。",
+    },
+    coconutCaptain: {
+      name: "椰子船长",
+      personality: "爱冒险、很可靠，肚子里装满海上的故事。",
+      introduction: "椰子船长在星光下航行，把小小愿望装进漂流瓶里。",
+    },
+  },
+  stories: {
+    title: "故事",
+    recentTitle: "最近故事",
+    recentEyebrow: "上次在水果王国",
+    recentIntro: "快速回想之前讲过的睡前冒险。",
+    reviewStory: "回顾",
+    addStory: "+ 添加故事",
+    addStoryTitle: "添加睡前故事",
+    editStoryTitle: "编辑睡前故事",
+    updateStory: "更新故事",
+    saveStory: "保存故事",
+    saving: "保存中...",
+    cancel: "取消",
+    edit: "编辑",
+    delete: "删除",
+    loading: "故事加载中...",
+    loadError: "暂时无法加载故事。",
+    noStories: "这里还没有故事。",
+    titleLabel: "故事标题",
+    summaryLabel: "小小摘要",
+    contentLabel: "睡前故事",
+    moralLabel: "温柔道理",
+    englishVersion: "英文版本",
+    chineseVersion: "中文版本",
+    primaryLanguage: "故事主语言",
+    fillPrimaryLanguage: "请把主语言的内容填写完整后再保存。",
+  },
+  badges: {
+    heading: "贴纸收藏",
+    dayEyebrow: "Hailey 获得的贴纸",
+    nightEyebrow: "月光下的贴纸小书",
+    intro: "这些小小纪念，记录每一次勇敢、善良和好奇的睡前冒险。",
+    earned: "已获得",
+    hidden: "还藏着呢",
+    courageStar: {
+      name: "勇气星星",
+      description: "因为试着勇敢一次而获得。",
+    },
+    kindnessHeart: {
+      name: "善良爱心",
+      description: "因为让朋友感到被看见、被照顾而获得。",
+    },
+    sharingRainbow: {
+      name: "分享彩虹",
+      description: "因为把快乐分享出去，让快乐变得更大而获得。",
+    },
+    wisdomBook: {
+      name: "智慧小书",
+      description: "因为问了一个认真又温柔的问题而获得。",
+    },
+    sleepyMoon: {
+      name: "晚安月亮",
+      description: "因为带着安静的心结束了一场冒险而获得。",
+    },
+  },
+};

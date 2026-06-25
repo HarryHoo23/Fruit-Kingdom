@@ -3,9 +3,7 @@ import type { Sticker } from "../../types/domain";
 export const stickers: Sticker[] = [
   {
     id: "courage-star",
-    name: "Courage Star",
     emoji: "⭐",
-    description: "Earned for trying something brave.",
     earned: true,
     accent: {
       border: "border-fruit-banana",
@@ -14,9 +12,7 @@ export const stickers: Sticker[] = [
   },
   {
     id: "kindness-heart",
-    name: "Kindness Heart",
     emoji: "❤️",
-    description: "Earned for helping a friend feel seen.",
     earned: true,
     accent: {
       border: "border-fruit-apple",
@@ -25,9 +21,7 @@ export const stickers: Sticker[] = [
   },
   {
     id: "sharing-rainbow",
-    name: "Sharing Rainbow",
     emoji: "🌈",
-    description: "Earned for making joy bigger by sharing it.",
     earned: true,
     accent: {
       border: "border-fruit-teal",
@@ -36,9 +30,7 @@ export const stickers: Sticker[] = [
   },
   {
     id: "wisdom-book",
-    name: "Wisdom Book",
     emoji: "📚",
-    description: "Earned for asking a thoughtful question.",
     earned: false,
     accent: {
       border: "border-fruit-blue",
@@ -47,9 +39,7 @@ export const stickers: Sticker[] = [
   },
   {
     id: "sleepy-moon",
-    name: "Sleepy Moon",
     emoji: "🌙",
-    description: "Earned for closing an adventure with a peaceful heart.",
     earned: false,
     accent: {
       border: "border-fruit-grape",
