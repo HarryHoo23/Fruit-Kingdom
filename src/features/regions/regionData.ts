@@ -6,7 +6,8 @@ export const regions: Region[] = [
     emoji: "🍎",
     unlocked: true,
     characterId: "apple-king",
-    mapPosition: { top: "18%", left: "17%" },
+    mapPosition: { x: 23, y: 20 },
+    haileyMarkerPosition: { x: 30, y: 32 },
     theme: {
       pinBorder: "border-fruit-apple",
       heroBg: "bg-region-apple",
@@ -18,7 +19,8 @@ export const regions: Region[] = [
     emoji: "🍓",
     unlocked: true,
     characterId: "strawberry-princess",
-    mapPosition: { top: "22%", left: "57%" },
+    mapPosition: { x: 61, y: 18 },
+    haileyMarkerPosition: { x: 54, y: 28 },
     theme: {
       pinBorder: "border-fruit-strawberry",
       heroBg: "bg-region-strawberry",
@@ -30,7 +32,8 @@ export const regions: Region[] = [
     emoji: "🍌",
     unlocked: true,
     characterId: "banana-sheriff",
-    mapPosition: { top: "59%", left: "12%" },
+    mapPosition: { x: 13, y: 52 },
+    haileyMarkerPosition: { x: 22, y: 58 },
     theme: {
       pinBorder: "border-fruit-banana",
       heroBg: "bg-region-banana",
@@ -42,7 +45,8 @@ export const regions: Region[] = [
     emoji: "🍉",
     unlocked: true,
     characterId: "watermelon-giant",
-    mapPosition: { top: "51%", left: "42%" },
+    mapPosition: { x: 43, y: 43 },
+    haileyMarkerPosition: { x: 48, y: 53 },
     theme: {
       pinBorder: "border-fruit-teal",
       heroBg: "bg-region-watermelon",
@@ -54,7 +58,8 @@ export const regions: Region[] = [
     emoji: "🍇",
     unlocked: true,
     characterId: "grape-wizard",
-    mapPosition: { top: "43%", left: "73%" },
+    mapPosition: { x: 80, y: 29 },
+    haileyMarkerPosition: { x: 72, y: 38 },
     theme: {
       pinBorder: "border-fruit-grape",
       heroBg: "bg-region-grape",
@@ -66,7 +71,8 @@ export const regions: Region[] = [
     emoji: "🥝",
     unlocked: false,
     characterId: "kiwi-professor",
-    mapPosition: { top: "75%", left: "30%" },
+    mapPosition: { x: 31, y: 73 },
+    haileyMarkerPosition: { x: 38, y: 64 },
     theme: {
       pinBorder: "border-fruit-kiwi",
       heroBg: "bg-region-kiwi",
@@ -78,7 +84,8 @@ export const regions: Region[] = [
     emoji: "🍊",
     unlocked: false,
     characterId: "orange-volcano-keeper",
-    mapPosition: { top: "71%", left: "62%" },
+    mapPosition: { x: 66, y: 69 },
+    haileyMarkerPosition: { x: 59, y: 61 },
     theme: {
       pinBorder: "border-fruit-orange",
       heroBg: "bg-region-orange",
@@ -90,7 +97,8 @@ export const regions: Region[] = [
     emoji: "🥥",
     unlocked: false,
     characterId: "coconut-captain",
-    mapPosition: { top: "79%", left: "84%" },
+    mapPosition: { x: 90, y: 76 },
+    haileyMarkerPosition: { x: 82, y: 68 },
     theme: {
       pinBorder: "border-fruit-coconut",
       heroBg: "bg-region-coconut",

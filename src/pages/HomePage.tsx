@@ -1,13 +1,18 @@
 import { Link } from "react-router-dom";
-import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimalCard } from "../components/AnimalCard";
 import { FloatingClouds } from "../components/FloatingClouds";
+import { KingdomMap } from "../components/KingdomMap/KingdomMap";
 import { regions } from "../features/regions/regionData";
 import { getCurrentStoryLanguage, getStoryText } from "../features/stories/storyText";
 import { useBedtime } from "../hooks/useBedtime";
 import { useStories } from "../hooks/useStories";
 import { toTranslationKey } from "../i18n/keys";
+import type { RegionId } from "../types/domain";
+
+// TODO: Replace this with Hailey's saved location from Firebase.
+const currentRegionId: RegionId = "apple-forest";
 
 export const HomePage = () => {
   const { bedtime } = useBedtime();
@@ -15,9 +20,26 @@ export const HomePage = () => {
   const storyLanguage = getCurrentStoryLanguage(i18n.resolvedLanguage);
   const { stories, loading } = useStories();
   const recentStories = stories.slice(0, 4);
+  const [mapFullscreen, setMapFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (!mapFullscreen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMapFullscreen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mapFullscreen]);
 
   return (
-    <section className="relative grid min-h-[calc(100vh-74px)] grid-cols-[minmax(240px,330px)_minmax(360px,1fr)] items-center gap-[clamp(24px,5vw,68px)] px-[clamp(16px,4vw,48px)] pb-[46px] pt-9 max-[880px]:grid-cols-1 max-[880px]:items-start">
+    <section className="relative grid min-h-[calc(100vh-74px)] grid-cols-[minmax(240px,1fr)_minmax(0,2fr)] items-center gap-[clamp(24px,3vw,48px)] px-[clamp(16px,3vw,48px)] pb-[46px] pt-9 max-[880px]:grid-cols-1 max-[880px]:items-start">
       <FloatingClouds />
       <div className="relative z-[2]">
         <p className="mb-2 text-[13px] font-black uppercase tracking-[0.05em] text-fruit-primary">
@@ -29,39 +51,28 @@ export const HomePage = () => {
         <p className="text-[17px] leading-[1.7] text-fruit-muted">{t("common.heroSubtitle")}</p>
       </div>
 
-      <div
-        className="relative isolate min-h-[min(72vh,650px)] overflow-hidden rounded-blob border-[10px] border-fruit-parchment/70 bg-map-land shadow-map-soft max-[880px]:min-h-[560px] max-[560px]:min-h-[520px] max-[560px]:border-[6px]"
-        aria-label={t("common.kingdomMap")}
-      >
-        <div className="pointer-events-none absolute inset-[4%] rounded-[inherit] bg-map-noise bg-[length:28px_28px,14px_14px] bg-[position:0_0,7px_7px] opacity-[0.55]" />
-        <div className="absolute inset-[18%_18%_12%_47%] rotate-[18deg] rounded-river bg-map-river shadow-river-ring" />
-        <div className="absolute left-[14%] top-[37%] h-[26px] w-[68%] rotate-[12deg] rounded-full bg-fruit-path/85 shadow-map-path" />
-        <div className="absolute left-[22%] top-[64%] h-[26px] w-[56%] -rotate-[19deg] rounded-full bg-fruit-path/85 shadow-map-path" />
-        {regions.map((region, index) => (
-          <Link
-            className={`group absolute z-[2] grid -translate-x-1/2 -translate-y-1/2 animate-pin justify-items-center gap-[7px] text-fruit-text ${!region.unlocked ? "opacity-[0.64]" : ""}`}
-            key={region.id}
-            to={`/regions/${region.id}`}
-            style={
-              {
-                top: region.mapPosition.top,
-                left: region.mapPosition.left,
-                animationDelay: `${index * 90}ms`,
-              } as CSSProperties
-            }
-            aria-label={t(`regions.${toTranslationKey(region.id)}.name`)}
-          >
-            <span
-              className={`grid size-[clamp(58px,8vw,78px)] place-items-center rounded-[28px] border-4 ${region.theme.pinBorder} bg-fruit-cream text-[clamp(29px,4vw,42px)] shadow-pin-low transition duration-200 ease-out group-hover:-rotate-3 group-hover:-translate-y-1 group-hover:scale-105 group-hover:shadow-pin-high`}
-            >
-              {region.unlocked ? region.emoji : "🔒"}
-            </span>
-            <span className="max-w-[124px] rounded-xl bg-fruit-parchment/90 px-2.5 py-[5px] text-center text-[13px] font-black text-fruit-text shadow-fruit-sm max-[560px]:max-w-[92px] max-[560px]:text-[11px]">
-              {t(`regions.${toTranslationKey(region.id)}.name`)}
-            </span>
-          </Link>
-        ))}
-      </div>
+      <KingdomMap
+        bedtime={bedtime}
+        currentRegionId={currentRegionId}
+        fullscreen={false}
+        onToggleFullscreen={() => setMapFullscreen(true)}
+      />
+
+      {mapFullscreen && (
+        <div
+          className="fixed inset-x-0 bottom-0 top-[74px] z-[100] bg-fruit-transparentInk/70 p-[clamp(8px,2vw,24px)] backdrop-blur-sm max-[880px]:top-[126px] max-[560px]:top-[190px]"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("common.fullscreenMap")}
+        >
+          <KingdomMap
+            bedtime={bedtime}
+            currentRegionId={currentRegionId}
+            fullscreen
+            onToggleFullscreen={() => setMapFullscreen(false)}
+          />
+        </div>
+      )}
 
       <div className="col-span-full">
         <div className="mb-3 flex items-end justify-between gap-4 max-[560px]:grid">

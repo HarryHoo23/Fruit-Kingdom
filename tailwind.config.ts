@@ -80,6 +80,8 @@ export default {
         "region-blob": "36% 64% 49% 51% / 48% 38% 62% 52%",
       },
       boxShadow: {
+        "hailey-glow":
+          "0 8px 20px theme(colors.fruit.transparentInk / 18%), 0 0 0 5px theme(colors.fruit.parchment / 32%)",
         "fruit-sm": "0 2px 4px rgb(61 52 40 / 0.06)",
         fruit: "0 3px 10px rgb(61 52 40 / 0.1)",
         "fruit-lg": "0 8px 24px rgb(61 52 40 / 0.14)",
@@ -164,6 +166,21 @@ export default {
         "animal-dots": "0 0, 7px 7px",
       },
       keyframes: {
+        haileyFloat: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
+        haileyBreathe: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.035)" },
+        },
+        haileySparkle: {
+          "0%, 100%": { opacity: "0.35", transform: "scale(0.85) translateY(0)" },
+          "50%": { opacity: "1", transform: "scale(1.08) translateY(-2px)" },
+        },
+        adventureRoute: {
+          to: { strokeDashoffset: "-32" },
+        },
         bgScroll: {
           from: { backgroundPosition: "0 0" },
           to: { backgroundPosition: "320px 320px" },
@@ -186,6 +203,10 @@ export default {
         },
       },
       animation: {
+        "hailey-float": "haileyFloat 3.8s ease-in-out infinite",
+        "hailey-breathe": "haileyBreathe 3.2s ease-in-out infinite",
+        "hailey-sparkle": "haileySparkle 2.8s ease-in-out infinite",
+        "adventure-route": "adventureRoute 5s linear infinite",
         "bg-scroll": "bgScroll 80s linear infinite",
         "bg-scroll-slow": "bgScroll 120s linear infinite",
         "cloud-drift": "cloudDrift 26s linear infinite",

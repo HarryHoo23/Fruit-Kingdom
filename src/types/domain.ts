@@ -25,8 +25,12 @@ export interface Region {
   unlocked: boolean;
   characterId: string;
   mapPosition: {
-    top: string;
-    left: string;
+    x: number;
+    y: number;
+  };
+  haileyMarkerPosition: {
+    x: number;
+    y: number;
   };
   theme: {
     pinBorder: string;
