@@ -48,7 +48,7 @@ export const HomePage = () => {
         <h1 className="mb-3 text-[clamp(44px,7vw,82px)] font-black leading-none text-fruit-parchment text-shadow-fruit">
           {t("common.appName")}
         </h1>
-        <p className="text-[17px] leading-[1.7] text-fruit-muted">{t("common.heroSubtitle")}</p>
+        <p className={`text-[17px] leading-[1.7] ${bedtime ? 'text-fruit-cream' : 'text-fruit-muted'}`}>{t("common.heroSubtitle")}</p>
       </div>
 
       <KingdomMap
@@ -80,10 +80,10 @@ export const HomePage = () => {
             <p className="mb-1 text-[13px] font-black uppercase tracking-[0.05em] text-fruit-primary">
               {t("stories.recentEyebrow")}
             </p>
-            <h2 className="mb-1 text-[26px] font-black leading-[1.15] text-fruit-text">
+            <h2 className={`mb-1 text-[26px] font-black leading-[1.15] ${bedtime ? 'text-fruit-cream' : 'text-fruit-text'}`}>
               {t("stories.recentTitle")}
             </h2>
-            <p className="text-[15px] font-bold leading-[1.6] text-fruit-muted">
+            <p className={`text-[15px] font-bold leading-[1.6] ${bedtime ? 'text-fruit-cream' : 'text-fruit-muted'}`}>
               {t("stories.recentIntro")}
             </p>
           </div>
