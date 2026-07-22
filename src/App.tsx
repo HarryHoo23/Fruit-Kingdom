@@ -10,6 +10,8 @@ import { useBedtime } from "./hooks/useBedtime";
 import { CollectionPage } from "./pages/CollectionPage";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
+import { PhotosPage } from "./pages/PhotosPage";
+import { MemoryHousePage } from "./pages/MemoryHousePage";
 import { RegionPage } from "./pages/RegionPage";
 import { useTranslation } from "react-i18next";
 
@@ -26,6 +28,8 @@ const ProtectedApp = () => {
             {t("common.map")}
           </NavLink>
           <NavLink to="/collection">{t("common.stickers")}</NavLink>
+          <NavLink to="/photos">{t("common.photos")}</NavLink>
+          <NavLink to="/memories">{t("common.memories")}</NavLink>
         </>
       }
       action={
@@ -41,6 +45,8 @@ const ProtectedApp = () => {
         <Route index element={<HomePage />} />
         <Route path="regions/:regionId" element={<RegionPage />} />
         <Route path="collection" element={<CollectionPage />} />
+        <Route path="photos" element={<PhotosPage />} />
+        <Route path="memories" element={<MemoryHousePage />} />
       </Routes>
     </Shell>
   );

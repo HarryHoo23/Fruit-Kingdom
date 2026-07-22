@@ -48,3 +48,387 @@
     cursor: inherit;
   }
 }
+
+@layer components {
+  .kingdom-carousel-card {
+    width: min(62%, 760px);
+    height: 78%;
+    transform: translate(calc(-50% + var(--slide-translate)), -50%) scale(var(--slide-scale))
+      rotate(var(--slide-rotate));
+    filter: brightness(var(--slide-brightness)) saturate(var(--slide-saturation));
+    transition:
+      transform 850ms cubic-bezier(0.22, 0.85, 0.25, 1),
+      opacity 450ms ease,
+      filter 700ms ease;
+  }
+
+  @media (max-width: 700px) {
+    .kingdom-carousel-card {
+      width: 78%;
+      height: 76%;
+      transform: translate(calc(-50% + var(--slide-translate-mobile)), -50%)
+        scale(var(--slide-scale-mobile));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kingdom-carousel-card {
+      transition: opacity 150ms ease;
+    }
+  }
+
+  .memory-house-page {
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(
+        circle at 18% 16%,
+        theme("colors.fruit.parchment / 35%") 0 2px,
+        transparent 3px
+      ),
+      radial-gradient(
+        circle at 76% 32%,
+        theme("colors.fruit.parchment / 25%") 0 1.5px,
+        transparent 2.5px
+      );
+    background-size:
+      42px 42px,
+      58px 58px;
+  }
+
+  .memory-house-header {
+    flex: none;
+  }
+
+  .memory-book-area {
+    width: 100%;
+    margin-top: clamp(28px, 4vw, 52px);
+  }
+
+  .memory-sunbeam {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      118deg,
+      transparent 12%,
+      theme("colors.fruit.parchment / 18%") 34%,
+      transparent 54%
+    );
+  }
+
+  .memory-particle {
+    position: absolute;
+    color: theme("colors.fruit.parchment");
+    opacity: 0.65;
+    animation: twinkle 3.8s ease-in-out infinite;
+  }
+
+  .memory-book-shell {
+    position: relative;
+    display: grid;
+    width: 100%;
+    justify-items: center;
+    outline: none;
+  }
+
+  .memory-book-shell:focus-visible .memory-book-stage {
+    border-radius: theme("borderRadius.fruit-xl");
+    box-shadow: 0 0 0 4px theme("colors.fruit.inputFocus / 35%");
+  }
+
+  .memory-book-stage {
+    position: relative;
+    width: min(100%, 1040px);
+    min-width: 0;
+    animation: memoryBookEnter 700ms ease-out both;
+  }
+
+  .memory-flip-book {
+    margin-inline: auto;
+    filter: drop-shadow(0 24px 28px theme("colors.fruit.transparentInk / 25%"));
+  }
+
+  .memory-book-page {
+    overflow: hidden;
+    color: theme("colors.fruit.text");
+    background-color: theme("colors.fruit.cream");
+  }
+
+  .memory-book-paper {
+    background-image: theme("backgroundImage.animal-dots");
+    background-size:
+      28px 28px,
+      14px 14px;
+    border: 1px solid theme("colors.fruit.cardBorder");
+  }
+
+  .memory-book-page-left {
+    border-radius: theme("borderRadius.fruit-lg") 6px 6px theme("borderRadius.fruit-lg");
+    box-shadow: inset -14px 0 22px theme("colors.fruit.shadowWood / 8%");
+  }
+
+  .memory-book-page-right {
+    border-radius: 6px theme("borderRadius.fruit-lg") theme("borderRadius.fruit-lg") 6px;
+    box-shadow: inset 14px 0 22px theme("colors.fruit.shadowWood / 8%");
+  }
+
+  .memory-page-content {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    padding: clamp(18px, 3vw, 34px);
+  }
+
+  .memory-page-with-toolbar {
+    position: relative;
+    padding-top: clamp(50px, 6vw, 58px);
+  }
+
+  .memory-return-contents {
+    position: absolute;
+    top: clamp(14px, 2vw, 20px);
+    right: clamp(14px, 2.4vw, 24px);
+    z-index: 4;
+    display: inline-flex;
+    min-height: 30px;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid theme("colors.fruit.cardBorder");
+    border-radius: 999px;
+    background: theme("colors.fruit.parchment / 92%");
+    padding: 4px 9px;
+    color: theme("colors.fruit.text");
+    font-size: 10px;
+    font-weight: 900;
+    box-shadow: theme("boxShadow.button-lift");
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .memory-return-contents:hover {
+    transform: translateY(-1px);
+    box-shadow: theme("boxShadow.button-hover");
+  }
+
+  .memory-return-contents:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px theme("colors.fruit.inputFocus / 35%");
+  }
+
+  .memory-page-number {
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    color: theme("colors.fruit.soft");
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .memory-contents-page {
+    position: relative;
+  }
+
+  .memory-contents-list {
+    display: grid;
+    gap: clamp(6px, 1.2vh, 10px);
+    margin-top: clamp(16px, 3vh, 28px);
+    overflow: auto;
+  }
+
+  .memory-contents-link {
+    display: flex;
+    min-height: 46px;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid theme("colors.fruit.cardBorder");
+    border-radius: theme("borderRadius.fruit-lg");
+    background: theme("colors.fruit.parchment / 55%");
+    padding: 7px 10px;
+    transition:
+      transform 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .memory-contents-link:hover {
+    transform: translateX(3px);
+    background: theme("colors.fruit.parchment / 85%");
+    box-shadow: theme("boxShadow.button-lift");
+  }
+
+  .memory-contents-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px theme("colors.fruit.inputFocus / 35%");
+  }
+
+  .memory-contents-icon {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    place-items: center;
+    border-radius: 999px;
+    background: theme("colors.fruit.cream");
+    font-size: 18px;
+    box-shadow: inset 0 0 0 1px theme("colors.fruit.cardBorder");
+  }
+
+  .memory-contents-dots {
+    min-width: 16px;
+    flex: 1;
+    align-self: flex-end;
+    margin-bottom: 8px;
+    border-bottom: 2px dotted theme("colors.fruit.cardDashed");
+  }
+
+  .memory-book-page-left .memory-page-number {
+    right: auto;
+    left: 18px;
+  }
+
+  .memory-book-cover {
+    border: 8px solid theme("colors.fruit.parchment");
+    border-radius: theme("borderRadius.fruit-xl");
+    background: linear-gradient(
+      145deg,
+      theme("colors.fruit.strawberry"),
+      theme("colors.fruit.apple")
+    );
+    box-shadow:
+      inset 0 0 0 2px theme("colors.fruit.cardBorder"),
+      inset 0 -18px 28px theme("colors.fruit.shadowWood / 16%");
+  }
+
+  .memory-cover-inner {
+    position: relative;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(26px, 5vw, 54px);
+  }
+
+  .memory-cover-ornament {
+    position: absolute;
+    inset: 22px;
+    display: grid;
+    place-items: start center;
+    border: 2px solid theme("colors.fruit.parchment / 55%");
+    border-radius: theme("borderRadius.fruit-lg");
+    padding-top: 16px;
+    color: theme("colors.fruit.parchment");
+  }
+
+  .memory-book-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 3vw, 28px);
+    margin-top: clamp(18px, 2.5vw, 30px);
+  }
+
+  .memory-book-nav-button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid theme("colors.fruit.cardBorder");
+    border-radius: 999px;
+    background: theme("colors.fruit.parchment");
+    padding: 8px 16px;
+    color: theme("colors.fruit.text");
+    font-size: 13px;
+    font-weight: 900;
+    box-shadow: theme("boxShadow.button-lift");
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .memory-book-nav-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: theme("boxShadow.button-hover");
+  }
+
+  .memory-book-nav-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px theme("colors.fruit.inputFocus / 35%");
+  }
+
+  .memory-book-nav-button:disabled {
+    cursor: default;
+    opacity: 0.45;
+    box-shadow: none;
+  }
+
+  @media (max-width: 640px) {
+    .memory-house-page {
+      min-height: calc(100svh - 74px);
+    }
+
+    .memory-book-area {
+      margin-top: 24px;
+    }
+
+    .memory-book-stage {
+      width: min(100%, 460px);
+    }
+
+    .memory-page-content {
+      padding: 18px;
+    }
+
+    .memory-page-with-toolbar {
+      padding-top: 54px;
+    }
+
+    .memory-return-contents {
+      top: 14px;
+      right: 14px;
+      min-height: 34px;
+    }
+
+    .memory-book-navigation {
+      width: 100%;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .memory-book-nav-button {
+      padding-inline: 12px;
+      font-size: 12px;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .memory-book-stage {
+      width: min(100%, 860px);
+    }
+
+    .memory-book-area {
+      margin-top: clamp(30px, 4vw, 42px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .memory-book-stage,
+    .memory-particle {
+      animation: none;
+    }
+  }
+}
+
+@keyframes memoryBookEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
