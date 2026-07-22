@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // A parent is trusted only when their server-managed profile is active and belongs to this family.
+    function isActiveFamilyMember() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.active == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId == "hailey-family";
+    }
+
+    match /users/{userId} {
+      allow read: if isActiveFamilyMember() && request.auth.uid == userId;
+      // Parents may only change their own optional avatar URL; roles and access stay admin-managed.
+      allow update: if isActiveFamilyMember()
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["photoURL"])
+        && request.resource.data.photoURL is string
+        && request.resource.data.photoURL.size() <= 2048;
+      allow create, delete: if false;
+    }
+
+    match /stories/{storyId} {
+      allow read, write: if isActiveFamilyMember();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

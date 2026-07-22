@@ -25,6 +25,48 @@ export const en = {
     bedtime: "Bedtime",
     daytime: "Daytime",
   },
+  auth: {
+    login: {
+      welcome: "Welcome to",
+      title: "Hailey's Fruit Kingdom",
+      subtitle:
+        "A magical place where Mum and Dad save stories, adventures, and precious memories for Hailey.",
+      googleButton: "Continue with Google",
+      signingIn: "Opening the castle gate...",
+      familyOnly: "Only invited family members can enter.",
+      errorGeneric: "We couldn't sign you in just now. Please try again.",
+      errorPopupClosed: "The sign-in window was closed before we finished.",
+      errorPopupBlocked: "Your browser blocked the sign-in window. Please allow pop-ups and try again.",
+      errorUnauthorizedDomain: "This website is not approved for sign-in yet.",
+      errorNetwork: "The kingdom seems offline. Check your connection and try again.",
+    },
+    accessDenied: {
+      title: "The castle gate is still closed",
+      description:
+        "This Google account is not yet allowed to enter Fruit Kingdom. Ask the Fruit Kingdom owner to add it as a family member.",
+      signedInAs: "Signed in as {{email}}",
+      signOut: "Sign Out",
+    },
+    loading: {
+      checkingSession: "Checking your key to the kingdom...",
+    },
+    role: {
+      dad: "Dad",
+      mum: "Mum",
+    },
+    profilePhoto: {
+      change: "Choose profile photo",
+      uploading: "Uploading photo...",
+      help: "JPG, PNG or WebP · up to 5 MB",
+      success: "Your new photo is ready!",
+      errorType: "Please choose a JPG, PNG or WebP image.",
+      errorSize: "Please choose an image smaller than 5 MB.",
+      errorUpload: "We couldn't upload that photo. Please try again.",
+    },
+    logout: "Sign Out",
+    welcomeDad: "Welcome back, Dad",
+    welcomeMum: "Welcome back, Mum",
+  },
   map: {
     exploreKingdom: "Explore the Kingdom",
     illustrationAlt:
