@@ -47,10 +47,14 @@ export const UserMenu = () => {
         {profile.photoURL ? (
           <img className="h-7 w-7 rounded-full object-cover" src={profile.photoURL} alt="" />
         ) : (
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-fruit-bananaLight text-xs">{initials}</span>
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-fruit-bananaLight text-xs">
+            {initials}
+          </span>
         )}
         <span>{roleLabel}</span>
-        <span className="text-xs text-fruit-soft" aria-hidden="true">▾</span>
+        <span className="text-xs text-fruit-soft" aria-hidden="true">
+          ▾
+        </span>
       </summary>
       <div className="absolute right-0 top-[calc(100%+8px)] z-20 min-w-56 rounded-fruit border border-fruit-cardBorder bg-fruit-parchment p-2 shadow-fruit-lg max-[560px]:left-0">
         <input
@@ -70,11 +74,18 @@ export const UserMenu = () => {
         </button>
         <p className="px-3 pb-2 text-xs font-bold text-fruit-soft">{t("auth.profilePhoto.help")}</p>
         {messageKey && (
-          <p className={`mx-2 mb-2 rounded-[10px] px-2 py-1.5 text-xs font-extrabold ${hasError ? "bg-fruit-appleLight text-fruit-danger" : "bg-fruit-kiwiLight text-fruit-primary"}`} role={hasError ? "alert" : "status"}>
+          <p
+            className={`mx-2 mb-2 rounded-[10px] px-2 py-1.5 text-xs font-extrabold ${hasError ? "bg-fruit-appleLight text-fruit-danger" : "bg-fruit-kiwiLight text-fruit-primary"}`}
+            role={hasError ? "alert" : "status"}
+          >
             {t(messageKey)}
           </p>
         )}
-        <button className="w-full rounded-[12px] px-3 py-2 text-left font-extrabold text-fruit-danger hover:bg-fruit-appleLight" type="button" onClick={() => void signOut()}>
+        <button
+          className="w-full rounded-[12px] px-3 py-2 text-left font-extrabold text-fruit-danger hover:bg-fruit-appleLight"
+          type="button"
+          onClick={() => void signOut()}
+        >
           {t("auth.logout")}
         </button>
       </div>

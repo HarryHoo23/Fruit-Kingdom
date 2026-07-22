@@ -10,6 +10,94 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId == "hailey-family";
     }
 
+    function isValidAuthor(author) {
+      return author is map
+        && author.keys().hasAll(["uid", "displayName", "familyRole"])
+        && author.keys().hasOnly(["uid", "displayName", "familyRole"])
+        && author.uid is string
+        && author.displayName is string
+        && author.displayName.size() <= 120
+        && author.familyRole in ["dad", "mum"];
+    }
+
+    function isValidLocation(location) {
+      return location == null
+        || (location is map
+          && location.keys().hasAll(["name", "city", "country"])
+          && location.keys().hasOnly(["name", "city", "country"])
+          && location.name is string
+          && location.city is string
+          && location.country is string
+          && location.name.size() <= 100
+          && location.city.size() <= 80
+          && location.country.size() <= 80);
+    }
+
+    function isValidOriginal(original, memoryId) {
+      return original is map
+        && original.keys().hasAll(["storagePath", "contentType", "sizeBytes"])
+        && original.keys().hasOnly(["storagePath", "contentType", "sizeBytes"])
+        && original.storagePath is string
+        && original.storagePath.matches("families/hailey-family/memories/" + memoryId + "/original/[^/]+")
+        && original.contentType in ["image/jpeg", "image/png", "image/webp"]
+        && original.sizeBytes is int
+        && original.sizeBytes > 0
+        && original.sizeBytes <= 25 * 1024 * 1024;
+    }
+
+    function isValidWebImage(image, memoryId, fileName) {
+      return image is map
+        && image.keys().hasAll(["storagePath", "downloadUrl", "width", "height", "sizeBytes"])
+        && image.keys().hasOnly(["storagePath", "downloadUrl", "width", "height", "sizeBytes"])
+        && image.storagePath is string
+        && image.storagePath.matches("families/hailey-family/memories/" + memoryId + "/" + fileName)
+        && image.downloadUrl is string
+        && image.downloadUrl.size() <= 2048
+        && image.width is int
+        && image.height is int
+        && image.width > 0
+        && image.height > 0
+        && image.sizeBytes is int
+        && image.sizeBytes > 0;
+    }
+
+    function isValidMemory(memory, memoryId) {
+      return memory.keys().hasAll([
+          "title", "description", "parentMessage", "capturedAt", "ageInMonths",
+          "regionId", "milestoneId", "tags", "location", "original", "displayImage",
+          "thumbnail", "status", "createdBy", "updatedBy", "uploadedBy", "createdAt", "updatedAt"
+        ])
+        && memory.keys().hasOnly([
+          "title", "description", "parentMessage", "capturedAt", "ageInMonths",
+          "regionId", "milestoneId", "tags", "location", "original", "displayImage",
+          "thumbnail", "status", "createdBy", "updatedBy", "uploadedBy", "createdAt", "updatedAt"
+        ])
+        && memory.title is string
+        && memory.title.size() > 0
+        && memory.title.size() <= 100
+        && memory.description is string
+        && memory.description.size() <= 1200
+        && memory.parentMessage is string
+        && memory.parentMessage.size() <= 800
+        && memory.capturedAt is timestamp
+        && memory.ageInMonths is int
+        && memory.ageInMonths >= 0
+        && (memory.regionId == null || memory.regionId is string)
+        && (memory.milestoneId == null || memory.milestoneId is string)
+        && memory.tags is list
+        && memory.tags.size() <= 12
+        && isValidLocation(memory.location)
+        && isValidOriginal(memory.original, memoryId)
+        && isValidWebImage(memory.displayImage, memoryId, "display.webp")
+        && isValidWebImage(memory.thumbnail, memoryId, "thumbnail.webp")
+        && memory.status in ["active", "archived"]
+        && isValidAuthor(memory.createdBy)
+        && isValidAuthor(memory.updatedBy)
+        && isValidAuthor(memory.uploadedBy)
+        && memory.createdAt is timestamp
+        && memory.updatedAt is timestamp;
+    }
+
     match /users/{userId} {
       allow read: if isActiveFamilyMember() && request.auth.uid == userId;
       // Parents may only change their own optional avatar URL; roles and access stay admin-managed.
@@ -23,6 +111,28 @@ service cloud.firestore {
 
     match /stories/{storyId} {
       allow read, write: if isActiveFamilyMember();
+    }
+
+    match /memories/{memoryId} {
+      allow read: if isActiveFamilyMember();
+      allow create: if isActiveFamilyMember()
+        && isValidMemory(request.resource.data, memoryId)
+        && request.resource.data.createdBy.uid == request.auth.uid
+        && request.resource.data.updatedBy.uid == request.auth.uid
+        && request.resource.data.uploadedBy.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isActiveFamilyMember()
+        && isValidMemory(request.resource.data, memoryId)
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.uploadedBy == resource.data.uploadedBy
+        && request.resource.data.original == resource.data.original
+        && request.resource.data.displayImage == resource.data.displayImage
+        && request.resource.data.thumbnail == resource.data.thumbnail
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy.uid == request.auth.uid;
+      allow delete: if false;
     }
 
     match /{document=**} {

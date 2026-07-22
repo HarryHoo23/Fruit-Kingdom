@@ -9,7 +9,10 @@ const profileLoadTimeoutMs = 10_000;
 const withTimeout = async <T>(promise: Promise<T>): Promise<T> => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error("Profile request timed out")), profileLoadTimeoutMs);
+    timeoutId = setTimeout(
+      () => reject(new Error("Profile request timed out")),
+      profileLoadTimeoutMs,
+    );
   });
 
   try {

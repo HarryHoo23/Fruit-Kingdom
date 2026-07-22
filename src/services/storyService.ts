@@ -9,7 +9,7 @@ import {
   serverTimestamp,
   Timestamp,
   updateDoc,
-  where,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { starterStories } from "../features/stories/storySeeds";
@@ -57,6 +57,26 @@ const readLocalStories = (): Story[] => {
   }
 };
 
+const readPersistedLocalStories = (): Story[] => {
+  const raw = window.localStorage.getItem(localKey);
+  if (!raw) return [];
+
+  try {
+    const parsed = JSON.parse(raw) as Array<
+      Omit<Story, "createdAt" | "updatedAt"> & { createdAt: string; updatedAt: string }
+    >;
+    return parsed.map((story) => ({
+      ...story,
+      originalLanguage: story.originalLanguage,
+      translations: story.translations,
+      createdAt: new Date(story.createdAt),
+      updatedAt: new Date(story.updatedAt),
+    }));
+  } catch {
+    return [];
+  }
+};
+
 const writeLocalStories = (stories: Story[]) => {
   window.localStorage.setItem(localKey, JSON.stringify(stories));
 };
@@ -74,6 +94,85 @@ const mapFirestoreStory = (id: string, data: FirestoreStory): Story => ({
   updatedAt: data.updatedAt?.toDate() ?? new Date(),
 });
 
+const starterStoryToFirestoreStory = (story: Story) => ({
+  title: story.title,
+  regionId: story.regionId,
+  summary: story.summary,
+  content: story.content,
+  moralLesson: story.moralLesson,
+  originalLanguage: story.originalLanguage,
+  translations: story.translations,
+  createdAt: Timestamp.fromDate(story.createdAt),
+  updatedAt: Timestamp.fromDate(story.updatedAt),
+});
+
+const withPrimaryTranslation = (story: Story): Story => {
+  const originalLanguage = story.originalLanguage ?? "en";
+  return {
+    ...story,
+    originalLanguage,
+    translations: {
+      ...story.translations,
+      [originalLanguage]: story.translations?.[originalLanguage] ?? {
+        title: story.title,
+        summary: story.summary,
+        content: story.content,
+        moralLesson: story.moralLesson,
+      },
+    },
+  };
+};
+
+const buildSeedStories = (localStories: Story[]) => {
+  const seedStories = new Map(
+    starterStories.map((story) => [story.id, withPrimaryTranslation(story)]),
+  );
+
+  localStories.forEach((localStory) => {
+    const existingStory = seedStories.get(localStory.id);
+    const normalizedLocalStory = withPrimaryTranslation(localStory);
+    seedStories.set(localStory.id, {
+      ...existingStory,
+      ...normalizedLocalStory,
+      translations: {
+        ...existingStory?.translations,
+        ...normalizedLocalStory.translations,
+      },
+    });
+  });
+
+  return Array.from(seedStories.values());
+};
+
+const seedMissingStories = async (stories: Story[], existingStories: Story[]) => {
+  if (!db) return;
+  const firestore = db;
+
+  const existingIds = new Set(existingStories.map((story) => story.id));
+  const missingStories = stories.filter((story) => !existingIds.has(story.id));
+  if (missingStories.length === 0) return;
+
+  const batch = writeBatch(firestore);
+  missingStories.forEach((story) => {
+    batch.set(doc(firestore, collectionName, story.id), starterStoryToFirestoreStory(story), {
+      merge: true,
+    });
+  });
+  await batch.commit();
+};
+
+const fetchFirestoreStories = async (): Promise<Story[]> => {
+  if (!db) return [];
+  const firestore = db;
+
+  const snapshot = await getDocs(
+    query(collection(firestore, collectionName), orderBy("updatedAt", "desc")),
+  );
+  return snapshot.docs.map((storyDoc) =>
+    mapFirestoreStory(storyDoc.id, storyDoc.data() as FirestoreStory),
+  );
+};
+
 export const storyService = {
   async listStories(regionId?: RegionId): Promise<Story[]> {
     if (!db) {
@@ -82,13 +181,19 @@ export const storyService = {
         .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
     }
 
-    const constraints = regionId
-      ? [where("regionId", "==", regionId), orderBy("updatedAt", "desc")]
-      : [orderBy("updatedAt", "desc")];
-    const snapshot = await getDocs(query(collection(db, collectionName), ...constraints));
-    return snapshot.docs.map((storyDoc) =>
-      mapFirestoreStory(storyDoc.id, storyDoc.data() as FirestoreStory),
+    const localStories = readPersistedLocalStories();
+    let stories = await fetchFirestoreStories();
+    const storiesToSeed = buildSeedStories(localStories);
+    const hasMissingSeedStories = storiesToSeed.some(
+      (seedStory) => !stories.some((story) => story.id === seedStory.id),
     );
+
+    if (hasMissingSeedStories) {
+      await seedMissingStories(storiesToSeed, stories);
+      stories = await fetchFirestoreStories();
+    }
+
+    return stories.filter((story) => (regionId ? story.regionId === regionId : true));
   },
 
   async createStory(draft: StoryDraft): Promise<string> {

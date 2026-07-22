@@ -13,7 +13,7 @@ export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
     const { t } = useTranslation();
 
     return (
-      <div ref={ref} className="memory-book-page memory-book-paper memory-book-page-right">
+      <div ref={ref} className="memory-book-page memory-book-paper memory-book-page-left">
         <div className="memory-page-content memory-contents-page">
           <p className="text-[10px] font-black uppercase tracking-[0.16em] text-fruit-primary">
             {t("memories.contentsEyebrow")}
@@ -27,9 +27,7 @@ export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
 
           <nav className="memory-contents-list" aria-label={t("memories.contentsTitle")}>
             {categories.map((category) => {
-              const regionName = t(
-                `regions.${toTranslationKey(category.regionId)}.name`,
-              );
+              const regionName = t(`regions.${toTranslationKey(category.regionId)}.name`);
 
               return (
                 <button
@@ -64,7 +62,9 @@ export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
               );
             })}
           </nav>
-          <span className="memory-page-number" aria-hidden="true">1</span>
+          <span className="memory-page-number" aria-hidden="true">
+            1
+          </span>
         </div>
       </div>
     );

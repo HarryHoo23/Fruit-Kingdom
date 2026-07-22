@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { KeyboardEvent } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { useMemoryBook } from "../hooks/useMemoryBook";
 import { BookCover } from "./BookCover";
 import { MemoryPage } from "./MemoryPage";
 import { MemoryContents } from "./MemoryContents";
+import { HaileyIntroPage } from "./HaileyIntroPage";
 
 type PageFlipController = {
   flip: (page: number) => void;
@@ -21,39 +22,37 @@ type FlipBookRef = {
 
 type MemoryBookProps = {
   memories: Memory[];
+  focusMemoryId?: string | null;
 };
 
-export const MemoryBook = ({ memories }: MemoryBookProps) => {
+export const MemoryBook = ({ memories, focusMemoryId }: MemoryBookProps) => {
   const { t } = useTranslation();
   const bookRef = useRef<FlipBookRef | null>(null);
-  const orderedMemories = useMemo(
-    () =>
-      regions.flatMap((region) => memories.filter((memory) => memory.regionId === region.id)),
-    [memories],
-  );
+  const orderedMemories = memories;
   const categories = useMemo(() => {
-    let memoryOffset = 0;
-
     return regions.flatMap((region) => {
-      const categoryMemories = orderedMemories.filter(
-        (memory) => memory.regionId === region.id,
+      const indexes = orderedMemories.flatMap((memory, index) =>
+        memory.regionId === region.id ? [index] : [],
       );
-      if (categoryMemories.length === 0) return [];
+      if (indexes.length === 0) return [];
+      const firstIndex = indexes[0];
+      const lastIndex = indexes[indexes.length - 1];
+      // Cover, contents, and Hailey's introduction occupy indexes 0, 1, and 2.
+      // Every photo then lands on an odd page, followed by its even description page.
+      const targetPageIndex = 3 + firstIndex * 2;
+      const startPage = targetPageIndex;
+      const endPage = 4 + lastIndex * 2;
 
-      // Page index 0 is the cover and index 1 is this contents page.
-      const targetPageIndex = 2 + memoryOffset * 2;
-      const startPage = 2 + memoryOffset * 2;
-      const endPage = startPage + categoryMemories.length * 2 - 1;
-      memoryOffset += categoryMemories.length;
-
-      return [{
-        regionId: region.id,
-        emoji: region.emoji,
-        memoryCount: categoryMemories.length,
-        startPage,
-        endPage,
-        targetPageIndex,
-      }];
+      return [
+        {
+          regionId: region.id,
+          emoji: region.emoji,
+          memoryCount: indexes.length,
+          startPage,
+          endPage,
+          targetPageIndex,
+        },
+      ];
     });
   }, [orderedMemories]);
   const { currentPage, currentMemory, setCurrentPage, atStart, atEnd } = useMemoryBook(
@@ -63,7 +62,18 @@ export const MemoryBook = ({ memories }: MemoryBookProps) => {
   const previous = () => bookRef.current?.pageFlip().flipPrev();
   const next = () => bookRef.current?.pageFlip().flipNext();
   const goToCategory = (page: number) => bookRef.current?.pageFlip().flip(page);
-  const returnToContents = () => bookRef.current?.pageFlip().flip(0);
+  const returnToContents = () => bookRef.current?.pageFlip().flip(1);
+
+  useEffect(() => {
+    if (!focusMemoryId) return;
+    const memoryIndex = orderedMemories.findIndex((memory) => memory.id === focusMemoryId);
+    if (memoryIndex < 0) return;
+    const timeoutId = window.setTimeout(
+      () => bookRef.current?.pageFlip().flip(3 + memoryIndex * 2),
+      100,
+    );
+    return () => window.clearTimeout(timeoutId);
+  }, [focusMemoryId, orderedMemories]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft") {
@@ -114,19 +124,20 @@ export const MemoryBook = ({ memories }: MemoryBookProps) => {
         >
           <BookCover title={t("memories.bookTitle")} subtitle={t("memories.bookSubtitle")} />
           <MemoryContents categories={categories} onSelectCategory={goToCategory} />
+          <HaileyIntroPage />
           {orderedMemories.flatMap((memory, index) => [
             <MemoryPage
               key={`${memory.id}-left`}
               memory={memory}
               side="left"
-              pageNumber={index * 2 + 2}
+              pageNumber={index * 2 + 3}
               onReturnToContents={returnToContents}
             />,
             <MemoryPage
               key={`${memory.id}-right`}
               memory={memory}
               side="right"
-              pageNumber={index * 2 + 3}
+              pageNumber={index * 2 + 4}
               onReturnToContents={returnToContents}
             />,
           ])}
@@ -152,10 +163,12 @@ export const MemoryBook = ({ memories }: MemoryBookProps) => {
             ? t("memories.cover")
             : currentPage === 1
               ? t("memories.contentsTitle")
-              : t("memories.indicator", {
-                  current: currentMemory,
-                  total: orderedMemories.length,
-                })}
+              : currentPage === 2
+                ? t("memories.haileyIntroTitle")
+                : t("memories.indicator", {
+                    current: currentMemory,
+                    total: orderedMemories.length,
+                  })}
         </p>
         <button
           type="button"

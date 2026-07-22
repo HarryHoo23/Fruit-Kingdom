@@ -15,10 +15,7 @@ export class ProfilePhotoError extends Error {
   }
 }
 
-export const uploadProfilePhoto = async (
-  profile: ParentProfile,
-  file: File,
-): Promise<string> => {
+export const uploadProfilePhoto = async (profile: ParentProfile, file: File): Promise<string> => {
   if (!allowedPhotoTypes.has(file.type)) throw new ProfilePhotoError("invalidType");
   if (file.size > maxPhotoSize) throw new ProfilePhotoError("tooLarge");
   if (!db || !storage) throw new ProfilePhotoError("uploadFailed");

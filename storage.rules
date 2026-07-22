@@ -20,6 +20,36 @@ service firebase.storage {
         && request.resource.contentType.matches("image/(jpeg|png|webp)");
     }
 
+    match /families/{familyId}/memories/{memoryId}/original/{fileName} {
+      allow read: if isActiveFamilyMember(familyId);
+      allow create: if isActiveFamilyMember(familyId)
+        && request.resource.size > 0
+        && request.resource.size <= 25 * 1024 * 1024
+        && request.resource.contentType.matches("image/(jpeg|png|webp)");
+      allow delete: if isActiveFamilyMember(familyId);
+      allow update: if false;
+    }
+
+    match /families/{familyId}/memories/{memoryId}/display.webp {
+      allow read: if isActiveFamilyMember(familyId);
+      allow create: if isActiveFamilyMember(familyId)
+        && request.resource.size > 0
+        && request.resource.size <= 15 * 1024 * 1024
+        && request.resource.contentType == "image/webp";
+      allow delete: if isActiveFamilyMember(familyId);
+      allow update: if false;
+    }
+
+    match /families/{familyId}/memories/{memoryId}/thumbnail.webp {
+      allow read: if isActiveFamilyMember(familyId);
+      allow create: if isActiveFamilyMember(familyId)
+        && request.resource.size > 0
+        && request.resource.size <= 3 * 1024 * 1024
+        && request.resource.contentType == "image/webp";
+      allow delete: if isActiveFamilyMember(familyId);
+      allow update: if false;
+    }
+
     match /{allPaths=**} {
       allow read, write: if false;
     }

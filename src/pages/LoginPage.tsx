@@ -55,16 +55,42 @@ export const LoginPage = () => {
   return (
     <main className="relative grid min-h-screen place-items-center overflow-hidden bg-fruit-shell bg-[size:auto_auto] px-5 py-12 font-fruit">
       <FloatingClouds />
-      <div className="absolute right-5 top-5 z-10"><LanguageSwitcher /></div>
+      <div className="absolute right-5 top-5 z-10">
+        <LanguageSwitcher />
+      </div>
       <section className="relative z-[1] w-full max-w-lg rounded-fruit-xl border border-fruit-cardBorder bg-fruit-parchment/95 px-[clamp(24px,6vw,52px)] py-10 text-center shadow-fruit-lg backdrop-blur-sm">
-        <span className="absolute -left-4 top-16 animate-float-gentle text-4xl" aria-hidden="true">🍃</span>
-        <span className="absolute -right-3 bottom-20 animate-float-gentle text-4xl" aria-hidden="true">🌼</span>
-        <img className="mx-auto mb-5 h-24 w-24 animate-hailey-float rounded-full border-4 border-fruit-paper object-cover shadow-hailey-glow" src={haileyAvatar} alt="" />
-        <p className="mb-2 text-sm font-black uppercase tracking-[0.08em] text-fruit-primary">{t("auth.login.welcome")}</p>
-        <h1 className="text-[clamp(30px,7vw,44px)] font-black leading-tight text-fruit-text">{t("auth.login.title")}</h1>
-        <p className="mx-auto mb-7 mt-4 max-w-md font-bold leading-relaxed text-fruit-muted">{t("auth.login.subtitle")}</p>
+        <span className="absolute -left-4 top-16 animate-float-gentle text-4xl" aria-hidden="true">
+          🍃
+        </span>
+        <span
+          className="absolute -right-3 bottom-20 animate-float-gentle text-4xl"
+          aria-hidden="true"
+        >
+          🌼
+        </span>
+        <img
+          className="mx-auto mb-5 h-24 w-24 animate-hailey-float rounded-full border-4 border-fruit-paper object-cover shadow-hailey-glow"
+          src={haileyAvatar}
+          alt=""
+        />
+        <p className="mb-2 text-sm font-black uppercase tracking-[0.08em] text-fruit-primary">
+          {t("auth.login.welcome")}
+        </p>
+        <h1 className="text-[clamp(30px,7vw,44px)] font-black leading-tight text-fruit-text">
+          {t("auth.login.title")}
+        </h1>
+        <p className="mx-auto mb-7 mt-4 max-w-md font-bold leading-relaxed text-fruit-muted">
+          {t("auth.login.subtitle")}
+        </p>
         <GoogleSignInButton loading={signingIn} onClick={() => void handleSignIn()} />
-        {errorKey && <p className="mt-4 rounded-[14px] bg-fruit-appleLight px-4 py-3 text-sm font-extrabold text-fruit-danger" role="alert">{t(errorKey)}</p>}
+        {errorKey && (
+          <p
+            className="mt-4 rounded-[14px] bg-fruit-appleLight px-4 py-3 text-sm font-extrabold text-fruit-danger"
+            role="alert"
+          >
+            {t(errorKey)}
+          </p>
+        )}
         <p className="mt-5 text-sm font-bold text-fruit-soft">🔐 {t("auth.login.familyOnly")}</p>
       </section>
     </main>

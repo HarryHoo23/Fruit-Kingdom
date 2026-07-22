@@ -12,6 +12,7 @@ import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { PhotosPage } from "./pages/PhotosPage";
 import { MemoryHousePage } from "./pages/MemoryHousePage";
+import { MemoryUploadPage } from "./pages/MemoryUploadPage";
 import { RegionPage } from "./pages/RegionPage";
 import { useTranslation } from "react-i18next";
 
@@ -47,6 +48,7 @@ const ProtectedApp = () => {
         <Route path="collection" element={<CollectionPage />} />
         <Route path="photos" element={<PhotosPage />} />
         <Route path="memories" element={<MemoryHousePage />} />
+        <Route path="memories/new" element={<MemoryUploadPage />} />
       </Routes>
     </Shell>
   );

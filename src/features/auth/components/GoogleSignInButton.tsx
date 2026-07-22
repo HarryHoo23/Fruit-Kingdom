@@ -15,7 +15,12 @@ export const GoogleSignInButton = ({ loading, onClick }: GoogleSignInButtonProps
       disabled={loading}
       onClick={onClick}
     >
-      <span className="grid h-7 w-7 place-items-center rounded-full bg-fruit-paper text-lg font-black text-fruit-blue" aria-hidden="true">G</span>
+      <span
+        className="grid h-7 w-7 place-items-center rounded-full bg-fruit-paper text-lg font-black text-fruit-blue"
+        aria-hidden="true"
+      >
+        G
+      </span>
       {loading ? t("auth.login.signingIn") : t("auth.login.googleButton")}
     </button>
   );

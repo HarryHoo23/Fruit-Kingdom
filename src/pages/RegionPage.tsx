@@ -1,35 +1,35 @@
-import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { AnimalButton } from "../components/AnimalButton";
-import { AnimalCard, type AnimalCardPattern } from "../components/AnimalCard";
-import { characters } from "../features/characters/characterData";
-import { regions } from "../features/regions/regionData";
-import { StoryForm } from "../features/stories/StoryForm";
-import { getCurrentStoryLanguage, getStoryText } from "../features/stories/storyText";
-import { useStories } from "../hooks/useStories";
-import { toTranslationKey } from "../i18n/keys";
-import type { RegionId, Story, StoryDraft } from "../types/domain";
+import { useMemo, useState } from "react"
+import { Link, useParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
+import { AnimalButton } from "../components/AnimalButton"
+import { AnimalCard, type AnimalCardPattern } from "../components/AnimalCard"
+import { characters } from "../features/characters/characterData"
+import { regions } from "../features/regions/regionData"
+import { StoryForm } from "../features/stories/StoryForm"
+import { getCurrentStoryLanguage, getStoryText } from "../features/stories/storyText"
+import { useStories } from "../hooks/useStories"
+import { toTranslationKey } from "../i18n/keys"
+import type { RegionId, Story, StoryDraft } from "../types/domain"
 
-const storyPatterns: AnimalCardPattern[] = ["pink", "yellow", "teal", "purple", "green", "orange"];
+const storyPatterns: AnimalCardPattern[] = ["pink", "yellow", "teal", "purple", "green", "orange"]
 
 const patternForIndex = (index: number): AnimalCardPattern =>
-  storyPatterns[index % storyPatterns.length];
+  storyPatterns[index % storyPatterns.length]
 
 export const RegionPage = () => {
-  const { i18n, t } = useTranslation();
-  const storyLanguage = getCurrentStoryLanguage(i18n.resolvedLanguage);
-  const { regionId } = useParams<{ regionId: RegionId }>();
-  const region = regions.find((item) => item.id === regionId);
-  const character = characters.find((item) => item.id === region?.characterId);
-  const { stories, loading, error, createStory, updateStory, deleteStory } = useStories(region?.id);
-  const [formOpen, setFormOpen] = useState(false);
-  const [editingStory, setEditingStory] = useState<Story | null>(null);
+  const { i18n, t } = useTranslation()
+  const storyLanguage = getCurrentStoryLanguage(i18n.resolvedLanguage)
+  const { regionId } = useParams<{ regionId: RegionId }>()
+  const region = regions.find((item) => item.id === regionId)
+  const character = characters.find((item) => item.id === region?.characterId)
+  const { stories, loading, error, createStory, updateStory, deleteStory } = useStories(region?.id)
+  const [formOpen, setFormOpen] = useState(false)
+  const [editingStory, setEditingStory] = useState<Story | null>(null)
 
   const formTitle = useMemo(
     () => (editingStory ? t("stories.editStoryTitle") : t("stories.addStoryTitle")),
     [editingStory, t],
-  );
+  )
 
   if (!region || !character) {
     return (
@@ -41,33 +41,30 @@ export const RegionPage = () => {
           <Link to="/">{t("common.returnToMap")}</Link>
         </AnimalCard>
       </section>
-    );
+    )
   }
 
   const handleSubmit = async (draft: StoryDraft) => {
     if (editingStory) {
-      await updateStory(editingStory.id, draft);
+      await updateStory(editingStory.id, draft)
     } else {
-      await createStory(draft);
+      await createStory(draft)
     }
-    setEditingStory(null);
-    setFormOpen(false);
-  };
+    setEditingStory(null)
+    setFormOpen(false)
+  }
 
   return (
     <section className="px-[clamp(16px,4vw,48px)] pb-14 pt-8">
       <Link
         className="mb-[18px] inline-flex rounded-[14px] bg-fruit-parchment/80 px-3.5 py-2 font-black text-fruit-text"
-        to="/"
-      >
+        to="/">
         {t("common.kingdomMapBack")}
       </Link>
       <div
-        className={`mb-[22px] grid grid-cols-[minmax(220px,360px)_minmax(0,1fr)] items-center gap-[clamp(22px,5vw,62px)] rounded-fruit-lg border-8 border-fruit-parchment/55 ${region.theme.heroBg} p-[clamp(22px,4vw,44px)] shadow-fruit-lg max-[880px]:grid-cols-1`}
-      >
+        className={`mb-[22px] grid grid-cols-[minmax(220px,360px)_minmax(0,1fr)] items-center gap-[clamp(22px,5vw,62px)] rounded-fruit-lg border-8 border-fruit-parchment/55 ${region.theme.heroBg} p-[clamp(22px,4vw,44px)] shadow-fruit-lg max-[880px]:grid-cols-1`}>
         <div
-          className={`relative grid min-h-[260px] place-items-center overflow-hidden rounded-region-blob ${region.theme.artBg} shadow-region-art`}
-        >
+          className={`relative grid min-h-[260px] place-items-center overflow-hidden rounded-region-blob ${region.theme.artBg} shadow-region-art`}>
           <span className="relative z-[1] animate-float-gentle text-[clamp(96px,16vw,154px)] drop-shadow-emoji">
             {region.emoji}
           </span>
@@ -118,10 +115,9 @@ export const RegionPage = () => {
             </div>
             <AnimalButton
               onClick={() => {
-                setEditingStory(null);
-                setFormOpen(true);
-              }}
-            >
+                setEditingStory(null)
+                setFormOpen(true)
+              }}>
               {t("stories.addStory")}
             </AnimalButton>
           </div>
@@ -133,8 +129,8 @@ export const RegionPage = () => {
                 regionId={region.id}
                 story={editingStory}
                 onCancel={() => {
-                  setFormOpen(false);
-                  setEditingStory(null);
+                  setFormOpen(false)
+                  setEditingStory(null)
                 }}
                 onSubmit={handleSubmit}
               />
@@ -149,18 +145,21 @@ export const RegionPage = () => {
 
           <div className="grid gap-3">
             {stories.map((story, index) => {
-              const storyText = getStoryText(story, storyLanguage);
+              const storyText = getStoryText(story, storyLanguage)
 
               return (
                 <AnimalCard
                   className="flex items-start justify-between gap-3.5 max-[560px]:grid max-[560px]:items-start"
-                  key={story.id}
-                  pattern={patternForIndex(index)}
-                >
+                      key={story.id}
+                    
+                  pattern={patternForIndex(index)}>
                   <div>
                     <h3 className="mb-1.5 text-xl font-black text-fruit-text">{storyText.title}</h3>
-                    <p className="text-[17px] leading-[1.7] text-fruit-muted">
+                    <p className="text-sm text-fruit-soft my-1.5">
                       {storyText.summary}
+                    </p>
+                    <p className="text-[17px] leading-[1.7] text-fruit-muted">
+                      {storyText.content}
                     </p>
                     <span className="mt-2 inline-flex rounded-full bg-fruit-paper/55 px-2.5 py-1 text-[13px] font-black text-fruit-text">
                       {storyText.moralLesson}
@@ -170,10 +169,9 @@ export const RegionPage = () => {
                     <AnimalButton
                       variant="soft"
                       onClick={() => {
-                        setEditingStory(story);
-                        setFormOpen(true);
-                      }}
-                    >
+                        setEditingStory(story)
+                        setFormOpen(true)
+                      }}>
                       {t("stories.edit")}
                     </AnimalButton>
                     <AnimalButton variant="danger" onClick={() => void deleteStory(story.id)}>
@@ -181,11 +179,11 @@ export const RegionPage = () => {
                     </AnimalButton>
                   </div>
                 </AnimalCard>
-              );
+              )
             })}
           </div>
         </AnimalCard>
       </div>
     </section>
-  );
-};
+  )
+}
