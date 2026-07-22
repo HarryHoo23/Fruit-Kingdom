@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Parent access is managed by each active profile in the default Firestore database.
+    function isActiveFamilyMember(familyId) {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.active == true
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.familyId == familyId
+        && familyId == "hailey-family";
+    }
+
+    match /families/{familyId}/profile-images/{userId}/{fileName} {
+      allow read: if isActiveFamilyMember(familyId);
+      allow write: if isActiveFamilyMember(familyId)
+        && request.auth.uid == userId
+        && fileName == "avatar"
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType.matches("image/(jpeg|png|webp)");
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
