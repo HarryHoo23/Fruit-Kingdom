@@ -6,17 +6,18 @@ import type { Memory } from "../types";
 import { formatAge } from "../../../config/childProfile";
 import { MemoryMetadata } from "./MemoryMetadata";
 import { MemoryPhoto } from "./MemoryPhoto";
-import { ParentLetter } from "./ParentLetter";
 
 type MemoryPageProps = {
   memory: Memory;
   side: "left" | "right";
   pageNumber: number;
   onReturnToContents: () => void;
+  onDeleteMemory?: (memory: Memory) => void;
+  deleting?: boolean;
 };
 
 export const MemoryPage = forwardRef<HTMLDivElement, MemoryPageProps>(
-  ({ memory, side, pageNumber, onReturnToContents }, ref) => {
+  ({ memory, side, pageNumber, onReturnToContents, onDeleteMemory, deleting = false }, ref) => {
     const { i18n, t } = useTranslation();
     const language = i18n.resolvedLanguage?.startsWith("zh") ? "zh" : "en";
     const region = regions.find((item) => item.id === memory.regionId);
@@ -32,18 +33,33 @@ export const MemoryPage = forwardRef<HTMLDivElement, MemoryPageProps>(
           className={`memory-page-content${side === "right" ? " memory-page-with-toolbar" : ""}`}
         >
           {side === "right" && (
-            <button
-              type="button"
-              className="memory-return-contents"
-              onClick={(event) => {
-                event.stopPropagation();
-                onReturnToContents();
-              }}
-              aria-label={t("memories.returnToContents")}
-            >
-              <span aria-hidden="true">⌂</span>
-              <span>{t("memories.contentsShort")}</span>
-            </button>
+            <>
+              <button
+                type="button"
+                className="memory-return-contents"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onReturnToContents();
+                }}
+                aria-label={t("memories.returnToContents")}
+              >
+                <span aria-hidden="true">⌂</span>
+                <span>{t("memories.contentsShort")}</span>
+              </button>
+              <button
+                type="button"
+                className="memory-delete-memory"
+                disabled={deleting}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDeleteMemory?.(memory);
+                }}
+                aria-label={t("memories.deleteMemory")}
+              >
+                <span aria-hidden="true">🗑</span>
+                <span>{deleting ? t("memories.deletingMemory") : t("memories.deleteMemory")}</span>
+              </button>
+            </>
           )}
           {side === "left" ? (
             <>
@@ -96,18 +112,9 @@ export const MemoryPage = forwardRef<HTMLDivElement, MemoryPageProps>(
               )}
 
               <div className="mt-auto pt-[clamp(10px,2vh,18px)]">
-                {memory.parentMessage ? (
-                  <ParentLetter
-                    author={author}
-                    message={memory.parentMessage}
-                    fromLabel={t("memories.from", { author })}
-                    loveLabel={t("memories.love")}
-                  />
-                ) : (
-                  <p className="text-right text-sm font-black text-fruit-text">
-                    {t("memories.from", { author })}
-                  </p>
-                )}
+                <p className="text-right text-sm font-black text-fruit-text">
+                  {t("memories.from", { author })}
+                </p>
               </div>
             </div>
           )}

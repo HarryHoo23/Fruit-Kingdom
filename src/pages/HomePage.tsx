@@ -14,7 +14,6 @@ import type { RegionId } from "../types/domain";
 
 // TODO: Replace this with Hailey's saved location from Firebase.
 const currentRegionId: RegionId = "apple-forest";
-
 export const HomePage = () => {
   const { bedtime } = useBedtime();
   const { i18n, t } = useTranslation();

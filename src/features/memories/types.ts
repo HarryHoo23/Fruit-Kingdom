@@ -65,8 +65,11 @@ export type MemoryDraft = Pick<
   | "uploadedBy"
 >;
 
-export type MemoryCategory = {
-  regionId: string;
+export type MemoryDirectorySort = "time" | "map" | "tag" | "category";
+
+export type MemoryDirectoryEntry = {
+  id: string;
+  label: string;
   emoji: string;
   memoryCount: number;
   startPage: number;

@@ -100,6 +100,17 @@ export const memoryService = {
     });
   },
 
+  async deleteMemory(memoryId: string, updatedBy: AuthorSnapshot): Promise<void> {
+    if (!db) throw new Error("Firestore is not configured");
+    await updateDoc(doc(db, collectionName, memoryId), {
+      status: "archived",
+      description: "",
+      parentMessage: "",
+      updatedBy,
+      updatedAt: serverTimestamp(),
+    });
+  },
+
   subscribeToActiveMemories(
     onNext: (memories: Memory[]) => void,
     onError: (error: Error) => void,

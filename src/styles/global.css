@@ -188,7 +188,7 @@
   .memory-return-contents {
     position: absolute;
     top: clamp(14px, 2vw, 20px);
-    right: clamp(14px, 2.4vw, 24px);
+    left: clamp(14px, 2.4vw, 24px);
     z-index: 4;
     display: inline-flex;
     min-height: 30px;
@@ -215,6 +215,43 @@
   .memory-return-contents:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px theme("colors.fruit.inputFocus / 35%");
+  }
+
+  .memory-delete-memory {
+    position: absolute;
+    bottom: clamp(14px, 2vw, 20px);
+    left: clamp(14px, 2.4vw, 24px);
+    z-index: 4;
+    display: inline-flex;
+    min-height: 30px;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid theme("colors.fruit.danger");
+    border-radius: 999px;
+    background: theme("colors.fruit.parchment / 92%");
+    padding: 4px 9px;
+    color: theme("colors.fruit.danger");
+    font-size: 10px;
+    font-weight: 900;
+    box-shadow: theme("boxShadow.button-lift");
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .memory-delete-memory:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: theme("boxShadow.button-hover");
+  }
+
+  .memory-delete-memory:disabled {
+    cursor: wait;
+    opacity: 0.6;
+  }
+
+  .memory-delete-memory:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px theme("colors.fruit.danger / 30%");
   }
 
   .memory-page-number {
@@ -388,7 +425,13 @@
 
     .memory-return-contents {
       top: 14px;
-      right: 14px;
+      left: 14px;
+      min-height: 34px;
+    }
+
+    .memory-delete-memory {
+      bottom: 14px;
+      left: 14px;
       min-height: 34px;
     }
 

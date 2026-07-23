@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, Upload } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -8,11 +9,13 @@ import { regions } from "../../regions/regionData";
 import { toTranslationKey } from "../../../i18n/keys";
 import { useCreateMemory } from "../hooks/useCreateMemory";
 import { useMemoryUpload } from "../hooks/useMemoryUpload";
+import { generateMemoryDescription } from "../services/memoryAiService";
 import type { CreateMemoryDetails } from "../types";
 import { ImageProcessingStatus } from "./ImageProcessingStatus";
 import { PhotoDropzone } from "./PhotoDropzone";
 import { PhotoPreview } from "./PhotoPreview";
 import { UploadProgress } from "./UploadProgress";
+import { LocationAutocompleteFields } from "./LocationAutocompleteFields";
 
 const fieldClasses =
   "min-h-12 w-full rounded-fruit border-2 border-fruit-cardBorder bg-fruit-input px-3.5 py-3 text-fruit-text outline-none focus:border-fruit-inputFocus focus:shadow-input-focus disabled:opacity-60";
@@ -25,22 +28,33 @@ const todayAsInputDate = () => {
 };
 
 export const MemoryUploadForm = () => {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2>(1);
   const [formError, setFormError] = useState(false);
   const [title, setTitle] = useState("");
   const [capturedAt, setCapturedAt] = useState(todayAsInputDate());
   const [description, setDescription] = useState("");
-  const [parentMessage, setParentMessage] = useState("");
+  const [aiLanguage, setAiLanguage] = useState<"en" | "zh">(
+    i18n.resolvedLanguage?.startsWith("zh") ? "zh" : "en",
+  );
   const [locationName, setLocationName] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("Melbourne");
+  const [country, setCountry] = useState("Australia");
   const [regionId, setRegionId] = useState("");
   const [milestoneId, setMilestoneId] = useState("");
   const [tags, setTags] = useState("");
   const upload = useMemoryUpload();
   const creation = useCreateMemory();
+  const aiDescription = useMutation({
+    mutationFn: ({ image, language }: { image: Blob; language: "en" | "zh" }) =>
+      generateMemoryDescription(image, language),
+    onSuccess: (result) => {
+      setTitle(result.title);
+      setDescription(result.description);
+      setTags(result.tags.join(", "));
+    },
+  });
 
   const processingErrorKey = upload.errorCode
     ? {
@@ -62,7 +76,7 @@ export const MemoryUploadForm = () => {
     const details: CreateMemoryDetails = {
       title: title.trim(),
       description: description.trim(),
-      parentMessage: parentMessage.trim(),
+      parentMessage: "",
       capturedAt: new Date(`${capturedAt}T12:00:00`),
       regionId: regionId || null,
       milestoneId: milestoneId.trim() || null,
@@ -82,6 +96,11 @@ export const MemoryUploadForm = () => {
     } catch {
       setFormError(true);
     }
+  };
+
+  const handleAiDescription = () => {
+    if (!upload.processedImage || aiDescription.isPending || creation.uploading) return;
+    aiDescription.mutate({ image: upload.processedImage.displayBlob, language: aiLanguage });
   };
 
   return (
@@ -168,10 +187,51 @@ export const MemoryUploadForm = () => {
                 {t("memories.form.description")}
                 <textarea className={fieldClasses} rows={4} maxLength={1200} disabled={creation.uploading} value={description} onChange={(event) => setDescription(event.target.value)} />
               </label>
-              <label className={labelClasses}>
-                {t("memories.form.parentMessage")}
-                <textarea className={fieldClasses} rows={3} maxLength={800} disabled={creation.uploading} value={parentMessage} onChange={(event) => setParentMessage(event.target.value)} />
-              </label>
+              <div className="grid gap-2">
+                <fieldset className="grid gap-2">
+                  <legend className="text-sm font-black text-fruit-text">
+                    {t("memories.form.aiLanguage")}
+                  </legend>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([
+                      ["zh", t("memories.form.aiChinese")],
+                      ["en", t("memories.form.aiEnglish")],
+                    ] as const).map(([language, label]) => (
+                      <label
+                        key={language}
+                        className={`flex min-h-11 cursor-pointer items-center justify-center rounded-full border-2 px-3 text-sm font-black transition ${aiLanguage === language ? "border-fruit-primary bg-fruit-primary text-fruit-paper" : "border-fruit-cardBorder bg-fruit-paper text-fruit-text"}`}
+                      >
+                        <input
+                          className="sr-only"
+                          type="radio"
+                          name="aiLanguage"
+                          value={language}
+                          checked={aiLanguage === language}
+                          disabled={aiDescription.isPending || creation.uploading}
+                          onChange={() => setAiLanguage(language)}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+                <AnimalButton
+                  type="button"
+                  variant="soft"
+                  disabled={!upload.processedImage || aiDescription.isPending || creation.uploading}
+                  onClick={handleAiDescription}
+                >
+                  <Sparkles size={18} aria-hidden="true" />
+                  {aiDescription.isPending ? t("memories.form.aiWriting") : t("memories.form.aiGenerate")}
+                </AnimalButton>
+                {aiDescription.isError && (
+                  <p className="text-sm font-bold text-fruit-danger" role="alert">
+                    {aiDescription.error instanceof Error
+                      ? aiDescription.error.message
+                      : t("memories.form.aiError")}
+                  </p>
+                )}
+              </div>
               <label className={labelClasses}>
                 {t("memories.form.region")}
                 <select className={fieldClasses} disabled={creation.uploading} value={regionId} onChange={(event) => setRegionId(event.target.value)}>
@@ -197,16 +257,13 @@ export const MemoryUploadForm = () => {
                   {t("memories.form.locationName")}
                   <input className={fieldClasses} maxLength={100} disabled={creation.uploading} value={locationName} onChange={(event) => setLocationName(event.target.value)} />
                 </label>
-                <div className="grid grid-cols-2 gap-3 max-[560px]:grid-cols-1">
-                  <label className={labelClasses}>
-                    {t("memories.form.city")}
-                    <input className={fieldClasses} maxLength={80} disabled={creation.uploading} value={city} onChange={(event) => setCity(event.target.value)} />
-                  </label>
-                  <label className={labelClasses}>
-                    {t("memories.form.country")}
-                    <input className={fieldClasses} maxLength={80} disabled={creation.uploading} value={country} onChange={(event) => setCountry(event.target.value)} />
-                  </label>
-                </div>
+                <LocationAutocompleteFields
+                  city={city}
+                  country={country}
+                  disabled={creation.uploading}
+                  onCityChange={setCity}
+                  onCountryChange={setCountry}
+                />
               </fieldset>
             </div>
           </div>

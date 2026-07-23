@@ -1,16 +1,25 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toTranslationKey } from "../../../i18n/keys";
-import type { MemoryCategory } from "../types";
+import type { MemoryDirectoryEntry, MemoryDirectorySort } from "../types";
 
 type MemoryContentsProps = {
-  categories: MemoryCategory[];
+  categories: MemoryDirectoryEntry[];
+  sortMode: MemoryDirectorySort;
+  onSortModeChange: (mode: MemoryDirectorySort) => void;
   onSelectCategory: (targetPageIndex: number) => void;
 };
 
 export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
-  ({ categories, onSelectCategory }, ref) => {
+  ({ categories, sortMode, onSortModeChange, onSelectCategory }, ref) => {
     const { t } = useTranslation();
+    const [sortOpen, setSortOpen] = useState(false);
+    const sortOptions = [
+      ["tag", t("memories.sortTag")],
+      ["time", t("memories.sortTime")],
+      ["map", t("memories.sortMap")],
+      ["category", t("memories.sortCategory")],
+    ] as const;
+    const selectedSortLabel = sortOptions.find(([value]) => value === sortMode)?.[1] ?? "";
 
     return (
       <div ref={ref} className="memory-book-page memory-book-paper memory-book-page-left">
@@ -24,14 +33,44 @@ export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
           <p className="mt-3 text-[clamp(11px,1.3vw,14px)] font-bold leading-relaxed text-fruit-muted">
             {t("memories.contentsDescription")}
           </p>
+          <div className="relative mt-4 grid gap-1 text-xs font-black text-fruit-text">
+            {t("memories.sortLabel")}
+            <button
+              type="button"
+              className="flex min-h-10 items-center justify-between rounded-fruit border-2 border-fruit-cardBorder bg-fruit-input px-3 text-left text-sm font-black text-fruit-text outline-none focus:border-fruit-inputFocus"
+              onClick={(event) => {
+                event.stopPropagation();
+                setSortOpen((open) => !open);
+              }}
+            >
+              <span>{selectedSortLabel}</span>
+              <span aria-hidden="true">⌄</span>
+            </button>
+            {sortOpen && (
+              <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-fruit border-2 border-fruit-cardBorder bg-fruit-paper p-1 shadow-fruit">
+                {sortOptions.map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`w-full rounded-xl px-3 py-2 text-left text-sm font-black ${sortMode === value ? "bg-fruit-primary text-fruit-paper" : "text-fruit-text hover:bg-fruit-input"}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onSortModeChange(value);
+                      setSortOpen(false);
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <nav className="memory-contents-list" aria-label={t("memories.contentsTitle")}>
             {categories.map((category) => {
-              const regionName = t(`regions.${toTranslationKey(category.regionId)}.name`);
-
               return (
                 <button
-                  key={category.regionId}
+                  key={category.id}
                   type="button"
                   className="memory-contents-link"
                   onClick={(event) => {
@@ -39,7 +78,7 @@ export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
                     onSelectCategory(category.targetPageIndex);
                   }}
                   aria-label={t("memories.openCategory", {
-                    category: regionName,
+                    category: category.label,
                     page: category.startPage,
                   })}
                 >
@@ -47,7 +86,7 @@ export const MemoryContents = forwardRef<HTMLDivElement, MemoryContentsProps>(
                     {category.emoji}
                   </span>
                   <span className="min-w-0 flex-1 text-left">
-                    <span className="block truncate font-black text-fruit-text">{regionName}</span>
+                    <span className="block truncate font-black text-fruit-text">{category.label}</span>
                     <span className="block text-[10px] font-bold text-fruit-muted">
                       {t("memories.memoryCount", { count: category.memoryCount })}
                     </span>
