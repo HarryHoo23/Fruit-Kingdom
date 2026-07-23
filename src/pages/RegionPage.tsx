@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { AnimalButton } from "../components/AnimalButton"
@@ -10,11 +10,64 @@ import { getCurrentStoryLanguage, getStoryText } from "../features/stories/story
 import { useStories } from "../hooks/useStories"
 import { toTranslationKey } from "../i18n/keys"
 import type { RegionId, Story, StoryDraft } from "../types/domain"
+import { useKingdomProgress } from "../features/auth/hooks/useKingdomProgress"
 
 const storyPatterns: AnimalCardPattern[] = ["pink", "yellow", "teal", "purple", "green", "orange"]
 
 const patternForIndex = (index: number): AnimalCardPattern =>
   storyPatterns[index % storyPatterns.length]
+
+interface StoryCardProps {
+  story: Story
+  storyLanguage: "en" | "zh"
+  pattern: AnimalCardPattern
+  onEdit: () => void
+  onDelete: () => void
+}
+
+const StoryCard = ({ story, storyLanguage, pattern, onEdit, onDelete }: StoryCardProps) => {
+  const { t } = useTranslation()
+  const [expanded, setExpanded] = useState(false)
+  const storyText = getStoryText(story, storyLanguage)
+
+  return (
+    <AnimalCard
+      className="grid gap-3.5"
+      pattern={pattern}>
+      <div className="flex items-start justify-between gap-3.5 max-[560px]:grid">
+        <div className="min-w-0">
+          <h3 className="mb-1.5 text-xl font-black text-fruit-text">{storyText.title}</h3>
+          <p className="my-1.5 text-sm text-fruit-soft">{storyText.summary}</p>
+        </div>
+        <AnimalButton
+          variant="soft"
+          className="shrink-0"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((current) => !current)}>
+          {expanded ? t("stories.collapse") : t("stories.expand")}
+        </AnimalButton>
+      </div>
+
+      {expanded && (
+        <div className="grid gap-3">
+          <p className="text-[17px] leading-[1.7] text-fruit-muted">{storyText.content}</p>
+          <span className="inline-flex w-fit rounded-full bg-fruit-paper/55 px-2.5 py-1 text-[13px] font-black text-fruit-text">
+            {storyText.moralLesson}
+          </span>
+        </div>
+      )}
+
+      <div className="flex gap-2 max-[560px]:grid max-[560px]:w-full max-[560px]:grid-cols-2">
+        <AnimalButton variant="soft" onClick={onEdit}>
+          {t("stories.edit")}
+        </AnimalButton>
+        <AnimalButton variant="danger" onClick={onDelete}>
+          {t("stories.delete")}
+        </AnimalButton>
+      </div>
+    </AnimalCard>
+  )
+}
 
 export const RegionPage = () => {
   const { i18n, t } = useTranslation()
@@ -23,8 +76,13 @@ export const RegionPage = () => {
   const region = regions.find((item) => item.id === regionId)
   const character = characters.find((item) => item.id === region?.characterId)
   const { stories, loading, error, createStory, updateStory, deleteStory } = useStories(region?.id)
+  const { unlockedRegionIds, setCurrentRegion } = useKingdomProgress()
   const [formOpen, setFormOpen] = useState(false)
   const [editingStory, setEditingStory] = useState<Story | null>(null)
+
+  useEffect(() => {
+    if (region) setCurrentRegion(region.id)
+  }, [region, setCurrentRegion])
 
   const formTitle = useMemo(
     () => (editingStory ? t("stories.editStoryTitle") : t("stories.addStoryTitle")),
@@ -73,7 +131,7 @@ export const RegionPage = () => {
         </div>
         <div>
           <p className="mb-2 text-[13px] font-black uppercase tracking-[0.05em] text-fruit-primary">
-            {region.unlocked ? t("common.unlockedRegion") : t("common.comingSoon")}
+            {unlockedRegionIds.includes(region.id) ? t("common.unlockedRegion") : t("common.comingSoon")}
           </p>
           <h1 className="mb-3 text-[clamp(44px,7vw,82px)] font-black leading-none text-fruit-parchment text-shadow-fruit">
             {t(`regions.${toTranslationKey(region.id)}.name`)}
@@ -144,43 +202,19 @@ export const RegionPage = () => {
           )}
 
           <div className="grid gap-3">
-            {stories.map((story, index) => {
-              const storyText = getStoryText(story, storyLanguage)
-
-              return (
-                <AnimalCard
-                  className="flex items-start justify-between gap-3.5 max-[560px]:grid max-[560px]:items-start"
-                      key={story.id}
-                    
-                  pattern={patternForIndex(index)}>
-                  <div>
-                    <h3 className="mb-1.5 text-xl font-black text-fruit-text">{storyText.title}</h3>
-                    <p className="text-sm text-fruit-soft my-1.5">
-                      {storyText.summary}
-                    </p>
-                    <p className="text-[17px] leading-[1.7] text-fruit-muted">
-                      {storyText.content}
-                    </p>
-                    <span className="mt-2 inline-flex rounded-full bg-fruit-paper/55 px-2.5 py-1 text-[13px] font-black text-fruit-text">
-                      {storyText.moralLesson}
-                    </span>
-                  </div>
-                  <div className="flex gap-2 max-[560px]:grid max-[560px]:w-full max-[560px]:grid-cols-2">
-                    <AnimalButton
-                      variant="soft"
-                      onClick={() => {
-                        setEditingStory(story)
-                        setFormOpen(true)
-                      }}>
-                      {t("stories.edit")}
-                    </AnimalButton>
-                    <AnimalButton variant="danger" onClick={() => void deleteStory(story.id)}>
-                      {t("stories.delete")}
-                    </AnimalButton>
-                  </div>
-                </AnimalCard>
-              )
-            })}
+            {stories.map((story, index) => (
+              <StoryCard
+                key={story.id}
+                story={story}
+                storyLanguage={storyLanguage}
+                pattern={patternForIndex(index)}
+                onEdit={() => {
+                  setEditingStory(story)
+                  setFormOpen(true)
+                }}
+                onDelete={() => void deleteStory(story.id)}
+              />
+            ))}
           </div>
         </AnimalCard>
       </div>

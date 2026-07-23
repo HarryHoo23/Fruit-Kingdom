@@ -10,15 +10,14 @@ import { getCurrentStoryLanguage, getStoryText } from "../features/stories/story
 import { useBedtime } from "../hooks/useBedtime";
 import { useStories } from "../hooks/useStories";
 import { toTranslationKey } from "../i18n/keys";
-import type { RegionId } from "../types/domain";
+import { useKingdomProgress } from "../features/auth/hooks/useKingdomProgress";
 
-// TODO: Replace this with Hailey's saved location from Firebase.
-const currentRegionId: RegionId = "apple-forest";
 export const HomePage = () => {
   const { bedtime } = useBedtime();
   const { i18n, t } = useTranslation();
   const storyLanguage = getCurrentStoryLanguage(i18n.resolvedLanguage);
   const { stories, loading } = useStories();
+  const { currentRegionId, unlockedRegionIds } = useKingdomProgress(stories);
   const recentStories = stories.slice(0, 4);
   const [mapFullscreen, setMapFullscreen] = useState(false);
 
@@ -58,6 +57,7 @@ export const HomePage = () => {
       <KingdomMap
         bedtime={bedtime}
         currentRegionId={currentRegionId}
+        unlockedRegionIds={unlockedRegionIds}
         fullscreen={false}
         onToggleFullscreen={() => setMapFullscreen(true)}
       />
@@ -72,6 +72,7 @@ export const HomePage = () => {
           <KingdomMap
             bedtime={bedtime}
             currentRegionId={currentRegionId}
+            unlockedRegionIds={unlockedRegionIds}
             fullscreen
             onToggleFullscreen={() => setMapFullscreen(false)}
           />

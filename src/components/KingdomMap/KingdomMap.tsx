@@ -7,6 +7,7 @@ import { MapOverlay } from "./MapOverlay";
 type KingdomMapProps = {
   bedtime: boolean;
   currentRegionId: RegionId;
+  unlockedRegionIds: RegionId[];
   fullscreen: boolean;
   onToggleFullscreen: () => void;
 };
@@ -14,6 +15,7 @@ type KingdomMapProps = {
 export const KingdomMap = ({
   bedtime,
   currentRegionId,
+  unlockedRegionIds,
   fullscreen,
   onToggleFullscreen,
 }: KingdomMapProps) => {
@@ -28,7 +30,7 @@ export const KingdomMap = ({
         aria-label={t("map.exploreKingdom")}
       >
         <IllustratedMapLayer alt={t("map.illustrationAlt")} bedtime={bedtime} />
-        <MapOverlay currentRegionId={currentRegionId} />
+        <MapOverlay currentRegionId={currentRegionId} unlockedRegionIds={unlockedRegionIds} />
         <MapControls fullscreen={fullscreen} onToggleFullscreen={onToggleFullscreen} />
       </div>
     </div>

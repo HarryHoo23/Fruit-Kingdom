@@ -15,6 +15,7 @@ import { useAuth } from "../../auth/useAuth";
 import { createAuthorSnapshot } from "../../auth/utils";
 import { cleanupMemoryFiles } from "../services/memoryStorageService";
 import { memoryService } from "../services/memoryService";
+import { calculateAgeInMonths } from "../../../config/childProfile";
 
 type PageFlipController = {
   flip: (page: number) => void;
@@ -105,6 +106,16 @@ export const MemoryBook = ({ memories, focusMemoryId }: MemoryBookProps) => {
       ]);
     },
   });
+  const dateMutation = useMutation({
+    mutationFn: async ({ memory, capturedAt }: { memory: Memory; capturedAt: Date }) => {
+      if (!profile?.active) throw new Error("An active parent profile is required");
+      await memoryService.updateMemory(
+        memory.id,
+        { capturedAt, ageInMonths: calculateAgeInMonths(capturedAt) },
+        createAuthorSnapshot(profile),
+      );
+    },
+  });
 
   const previous = () => bookRef.current?.pageFlip().flipPrev();
   const next = () => bookRef.current?.pageFlip().flipNext();
@@ -115,6 +126,12 @@ export const MemoryBook = ({ memories, focusMemoryId }: MemoryBookProps) => {
     deleteMutation.mutate(memory, {
       onError: () => window.alert(t("memories.deleteError")),
     });
+  };
+  const changeMemoryDate = (memory: Memory, capturedAt: Date) => {
+    dateMutation.mutate(
+      { memory, capturedAt },
+      { onError: () => window.alert(t("memories.changeDateError")) },
+    );
   };
 
   useEffect(() => {
@@ -199,6 +216,8 @@ export const MemoryBook = ({ memories, focusMemoryId }: MemoryBookProps) => {
               onReturnToContents={returnToContents}
               onDeleteMemory={deleteMemory}
               deleting={deleteMutation.isPending && deleteMutation.variables?.id === memory.id}
+              onChangeCapturedAt={changeMemoryDate}
+              changingDate={dateMutation.isPending && dateMutation.variables?.memory.id === memory.id}
             />,
           ])}
           <BookCover title="" subtitle="" back backMessage={t("memories.backCover")} />

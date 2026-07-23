@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { regions } from "../../regions/regionData";
 import { toTranslationKey } from "../../../i18n/keys";
@@ -13,11 +13,13 @@ type MemoryPageProps = {
   pageNumber: number;
   onReturnToContents: () => void;
   onDeleteMemory?: (memory: Memory) => void;
+  onChangeCapturedAt?: (memory: Memory, capturedAt: Date) => void;
   deleting?: boolean;
+  changingDate?: boolean;
 };
 
 export const MemoryPage = forwardRef<HTMLDivElement, MemoryPageProps>(
-  ({ memory, side, pageNumber, onReturnToContents, onDeleteMemory, deleting = false }, ref) => {
+  ({ memory, side, pageNumber, onReturnToContents, onDeleteMemory, onChangeCapturedAt, deleting = false, changingDate = false }, ref) => {
     const { i18n, t } = useTranslation();
     const language = i18n.resolvedLanguage?.startsWith("zh") ? "zh" : "en";
     const region = regions.find((item) => item.id === memory.regionId);
@@ -26,6 +28,25 @@ export const MemoryPage = forwardRef<HTMLDivElement, MemoryPageProps>(
       : t("memories.noRegion");
     const author =
       memory.createdBy.displayName || t(`memories.author.${memory.createdBy.familyRole}`);
+    const dateInputRef = useRef<HTMLInputElement>(null);
+    const [dateValue, setDateValue] = useState(() => memory.capturedAt.toISOString().slice(0, 10));
+
+    useEffect(() => {
+      setDateValue(memory.capturedAt.toISOString().slice(0, 10));
+    }, [memory.capturedAt]);
+
+    const handleDateChange = (value: string) => {
+      setDateValue(value);
+      if (value) onChangeCapturedAt?.(memory, new Date(`${value}T12:00:00`));
+    };
+    const stopPageFlip = (event: SyntheticEvent) => {
+      event.stopPropagation();
+      event.nativeEvent.stopImmediatePropagation?.();
+    };
+    const stopPageFlipClick = (event: SyntheticEvent) => {
+      event.preventDefault();
+      stopPageFlip(event);
+    };
 
     return (
       <div ref={ref} className={`memory-book-page memory-book-paper memory-book-page-${side}`}>
@@ -46,19 +67,56 @@ export const MemoryPage = forwardRef<HTMLDivElement, MemoryPageProps>(
                 <span aria-hidden="true">⌂</span>
                 <span>{t("memories.contentsShort")}</span>
               </button>
-              <button
-                type="button"
-                className="memory-delete-memory"
-                disabled={deleting}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onDeleteMemory?.(memory);
-                }}
-                aria-label={t("memories.deleteMemory")}
-              >
-                <span aria-hidden="true">🗑</span>
-                <span>{deleting ? t("memories.deletingMemory") : t("memories.deleteMemory")}</span>
-              </button>
+              <div className="memory-page-actions">
+                <button
+                  type="button"
+                  className="memory-delete-memory"
+                  disabled={deleting || changingDate}
+                  onPointerDownCapture={stopPageFlip}
+                  onMouseDownCapture={stopPageFlip}
+                  onTouchStartCapture={stopPageFlip}
+                  onClick={(event) => {
+                    stopPageFlipClick(event);
+                    onDeleteMemory?.(memory);
+                  }}
+                  aria-label={t("memories.deleteMemory")}
+                >
+                  <span aria-hidden="true">🗑</span>
+                  <span>{deleting ? t("memories.deletingMemory") : t("memories.deleteMemory")}</span>
+                </button>
+                <button
+                  type="button"
+                  className="memory-change-date"
+                  disabled={deleting || changingDate}
+                  onPointerDownCapture={stopPageFlip}
+                  onMouseDownCapture={stopPageFlip}
+                  onTouchStartCapture={stopPageFlip}
+                  onClick={(event) => {
+                    stopPageFlipClick(event);
+                    const input = dateInputRef.current;
+                    if (input?.showPicker) input.showPicker();
+                    else input?.click();
+                  }}
+                  aria-label={t("memories.changeDate")}
+                >
+                  <span aria-hidden="true">📅</span>
+                  <span>{changingDate ? t("memories.changingDate") : t("memories.changeDate")}</span>
+                </button>
+                <input
+                  ref={dateInputRef}
+                  className="sr-only"
+                  type="date"
+                  value={dateValue}
+                  max={new Date().toISOString().slice(0, 10)}
+                  onPointerDownCapture={stopPageFlip}
+                  onMouseDownCapture={stopPageFlip}
+                  onTouchStartCapture={stopPageFlip}
+                  onClick={stopPageFlipClick}
+                  onChange={(event) => handleDateChange(event.target.value)}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                />
+              </div>
             </>
           )}
           {side === "left" ? (

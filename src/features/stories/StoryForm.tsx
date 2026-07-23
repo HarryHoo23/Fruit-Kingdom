@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { AnimalButton } from "../../components/AnimalButton";
 import { AnimalCard } from "../../components/AnimalCard";
@@ -9,6 +10,7 @@ import {
   hasStoryText,
   isCompleteStoryText,
 } from "./storyText";
+import { generateStory } from "./storyAiService";
 
 interface StoryFormProps {
   regionId: RegionId;
@@ -43,6 +45,19 @@ export const StoryForm = ({ regionId, story, onSubmit, onCancel }: StoryFormProp
     emptyDraft(regionId, currentLanguage),
   );
   const [saving, setSaving] = useState(false);
+  const [storyPrompt, setStoryPrompt] = useState("");
+  const storyGenerator = useMutation({
+    mutationFn: ({ prompt, language }: { prompt: string; language: StoryLanguage }) =>
+      generateStory(prompt, language),
+    onSuccess: (generated, variables) => {
+      setDraft((current) => ({
+        ...current,
+        originalLanguage: variables.language,
+        translations: { ...current.translations, [variables.language]: generated },
+      }));
+      setStoryPrompt("");
+    },
+  });
 
   useEffect(() => {
     if (!story) {
@@ -167,12 +182,48 @@ export const StoryForm = ({ regionId, story, onSubmit, onCancel }: StoryFormProp
   };
 
   const canSave = isCompleteStoryText(draft.translations[draft.originalLanguage]);
+  const handleGenerateStory = () => {
+    if (!storyPrompt.trim() || storyGenerator.isPending) return;
+    storyGenerator.mutate({ prompt: storyPrompt, language: draft.originalLanguage });
+  };
 
   return (
     <form className="grid gap-[13px]" onSubmit={handleSubmit}>
       <p className="text-[13px] font-extrabold text-fruit-soft">
         {t("stories.fillPrimaryLanguage")}
       </p>
+      <AnimalCard dashed className="grid gap-3">
+        <h3 className="text-base font-black text-fruit-text">{t("stories.aiGeneratorTitle")}</h3>
+        <p className="text-[13px] font-bold text-fruit-soft">{t("stories.aiGeneratorDescription")}</p>
+        <textarea
+          className={fieldClasses}
+          rows={3}
+          value={storyPrompt}
+          placeholder={t("stories.aiGeneratorPlaceholder")}
+          disabled={storyGenerator.isPending || saving}
+          onChange={(event) => setStoryPrompt(event.target.value)}
+        />
+        <div className="flex items-center justify-between gap-3 max-[560px]:grid">
+          <span className="text-xs font-black text-fruit-soft">
+            {t("stories.aiGeneratorLanguage", {
+              language: draft.originalLanguage === "zh" ? t("stories.chineseVersion") : t("stories.englishVersion"),
+            })}
+          </span>
+          <AnimalButton
+            type="button"
+            variant="soft"
+            disabled={!storyPrompt.trim() || storyGenerator.isPending || saving}
+            onClick={handleGenerateStory}
+          >
+            {storyGenerator.isPending ? t("stories.aiGenerating") : t("stories.aiGenerate")}
+          </AnimalButton>
+        </div>
+        {storyGenerator.isError && (
+          <p className="text-sm font-bold text-fruit-danger" role="alert">
+            {storyGenerator.error instanceof Error ? storyGenerator.error.message : t("stories.aiError")}
+          </p>
+        )}
+      </AnimalCard>
       <div className="grid grid-cols-2 gap-3 max-[880px]:grid-cols-1">
         {renderLanguageFields("en")}
         {renderLanguageFields("zh")}

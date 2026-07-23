@@ -103,9 +103,10 @@ service cloud.firestore {
       // Parents may only change their own optional avatar URL; roles and access stay admin-managed.
       allow update: if isActiveFamilyMember()
         && request.auth.uid == userId
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["photoURL"])
-        && request.resource.data.photoURL is string
-        && request.resource.data.photoURL.size() <= 2048;
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["photoURL", "currentRegionId", "unlockedRegionIds"])
+        && (!request.resource.data.keys().hasAny(["photoURL"]) || (request.resource.data.photoURL is string && request.resource.data.photoURL.size() <= 2048))
+        && (!request.resource.data.keys().hasAny(["currentRegionId"]) || request.resource.data.currentRegionId in ["apple-forest", "strawberry-castle", "banana-beach", "watermelon-lake", "grape-valley", "kiwi-rainforest", "orange-volcano", "coconut-island"])
+        && (!request.resource.data.keys().hasAny(["unlockedRegionIds"]) || (request.resource.data.unlockedRegionIds is list && request.resource.data.unlockedRegionIds.size() <= 8));
       allow create, delete: if false;
     }
 

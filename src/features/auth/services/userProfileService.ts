@@ -1,6 +1,8 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import type { FamilyRole, ParentProfile } from "../types";
+import { regions } from "../../regions/regionData";
+import type { RegionId } from "../../../types/domain";
 
 const isFamilyRole = (value: unknown): value is FamilyRole => value === "dad" || value === "mum";
 
@@ -51,5 +53,11 @@ export const loadUserProfile = async (uid: string): Promise<ParentProfile | null
     familyId: profile.familyId,
     active: profile.active,
     photoURL: typeof profile.photoURL === "string" ? profile.photoURL : undefined,
+    currentRegionId: regions.some((region) => region.id === profile.currentRegionId)
+      ? (profile.currentRegionId as RegionId)
+      : undefined,
+    unlockedRegionIds: Array.isArray(profile.unlockedRegionIds)
+      ? profile.unlockedRegionIds.filter((id): id is RegionId => regions.some((region) => region.id === id))
+      : undefined,
   };
 };

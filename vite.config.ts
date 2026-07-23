@@ -137,15 +137,83 @@ const createAiApiPlugin = (mode: string): Plugin => {
     }
   };
 
+  const storyGeneratorHandler = async (
+    request: ApiRequest,
+    response: ApiResponse,
+    next: () => void,
+  ) => {
+    if (request.method !== "POST" || request.url !== "/api/generate-story") {
+      next();
+      return;
+    }
+
+    if (!client) {
+      response.statusCode = 500;
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify({ error: "OPENAI_API_KEY is not configured on the server." }));
+      return;
+    }
+
+    try {
+      const chunks: Buffer[] = [];
+      for await (const chunk of request) chunks.push(Buffer.from(chunk));
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
+        prompt?: string;
+        language?: "en" | "zh";
+      };
+      if (!body.prompt?.trim()) {
+        response.statusCode = 400;
+        response.setHeader("Content-Type", "application/json");
+        response.end(JSON.stringify({ error: "prompt is required" }));
+        return;
+      }
+
+      const language = body.language === "zh" ? "Chinese" : "English";
+      const completion = await client.chat.completions.create({
+        model: env.OPENAI_MODEL || "gpt-4o-mini",
+        temperature: 0.8,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: `You write warm, age-appropriate bedtime stories in ${language}. Return only valid JSON with exactly four string fields: title (at most 80 characters), summary (at most 160 characters), content (a complete bedtime story), and moralLesson (a gentle lesson at most 120 characters). Follow the user's prompt without inventing personal facts.`,
+          },
+          { role: "user", content: body.prompt.trim() },
+        ],
+      });
+      const raw = completion.choices[0]?.message.content || "{}";
+      const parsed = JSON.parse(raw) as {
+        title?: string;
+        summary?: string;
+        content?: string;
+        moralLesson?: string;
+      };
+      response.statusCode = 200;
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify({
+        title: parsed.title?.trim() || "",
+        summary: parsed.summary?.trim() || "",
+        content: parsed.content?.trim() || "",
+        moralLesson: parsed.moralLesson?.trim() || "",
+      }));
+    } catch (error) {
+      response.statusCode = 500;
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify({ error: error instanceof Error ? error.message : "Unable to generate story" }));
+    }
+  };
+
   return {
     name: "fruit-kingdom-ai-api",
     configureServer(server) {
       server.middlewares.use(handler);
       server.middlewares.use(memoryDescriptionHandler);
+      server.middlewares.use(storyGeneratorHandler);
     },
     configurePreviewServer(server) {
       server.middlewares.use(handler);
       server.middlewares.use(memoryDescriptionHandler);
+      server.middlewares.use(storyGeneratorHandler);
     },
   };
 };

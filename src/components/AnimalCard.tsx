@@ -18,7 +18,7 @@ interface AnimalCardProps extends HTMLAttributes<HTMLDivElement> {
 
 const patternClasses: Record<AnimalCardPattern, string> = {
   default: "border-fruit-cardBorder bg-fruit-cream",
-  pink: "border-fruit-strawberry bg-fruit-appleLight",
+  pink: "border-fruit-strawberry bg-fruit-strawberryLight",
   blue: "border-fruit-blue bg-fruit-blueLight",
   yellow: "border-fruit-banana bg-fruit-bananaLight",
   green: "border-fruit-kiwi bg-fruit-kiwiLight",

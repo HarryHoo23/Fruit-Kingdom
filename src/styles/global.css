@@ -217,20 +217,27 @@
     box-shadow: 0 0 0 3px theme("colors.fruit.inputFocus / 35%");
   }
 
-  .memory-delete-memory {
+  .memory-page-actions {
     position: absolute;
     bottom: clamp(14px, 2vw, 20px);
     left: clamp(14px, 2.4vw, 24px);
     z-index: 4;
     display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .memory-delete-memory,
+  .memory-change-date {
+    display: inline-flex;
     min-height: 30px;
     align-items: center;
     gap: 6px;
-    border: 1px solid theme("colors.fruit.danger");
+    border: 1px solid theme("colors.fruit.cardBorder");
     border-radius: 999px;
     background: theme("colors.fruit.parchment / 92%");
     padding: 4px 9px;
-    color: theme("colors.fruit.danger");
+    color: theme("colors.fruit.text");
     font-size: 10px;
     font-weight: 900;
     box-shadow: theme("boxShadow.button-lift");
@@ -239,7 +246,13 @@
       box-shadow 180ms ease;
   }
 
-  .memory-delete-memory:hover:not(:disabled) {
+  .memory-delete-memory {
+    border-color: theme("colors.fruit.danger");
+    color: theme("colors.fruit.danger");
+  }
+
+  .memory-delete-memory:hover:not(:disabled),
+  .memory-change-date:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: theme("boxShadow.button-hover");
   }
@@ -249,7 +262,8 @@
     opacity: 0.6;
   }
 
-  .memory-delete-memory:focus-visible {
+  .memory-delete-memory:focus-visible,
+  .memory-change-date:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px theme("colors.fruit.danger / 30%");
   }
@@ -429,9 +443,14 @@
       min-height: 34px;
     }
 
-    .memory-delete-memory {
+    .memory-page-actions {
       bottom: 14px;
       left: 14px;
+      min-height: 34px;
+    }
+
+    .memory-delete-memory,
+    .memory-change-date {
       min-height: 34px;
     }
 

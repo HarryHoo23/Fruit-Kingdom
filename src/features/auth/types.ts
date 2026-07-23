@@ -1,4 +1,5 @@
 import type { User } from "firebase/auth";
+import type { RegionId } from "../../types/domain";
 
 export type FamilyRole = "dad" | "mum";
 
@@ -10,6 +11,8 @@ export type ParentProfile = {
   familyId: string;
   active: boolean;
   photoURL?: string;
+  currentRegionId?: RegionId;
+  unlockedRegionIds?: RegionId[];
 };
 
 export type AuthorSnapshot = {

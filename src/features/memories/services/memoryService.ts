@@ -80,12 +80,14 @@ export const memoryService = {
 
   async updateMemory(
     memoryId: string,
-    changes: Partial<Pick<Memory, "title" | "description" | "parentMessage" | "regionId" | "milestoneId" | "tags" | "location">>,
+    changes: Partial<Pick<Memory, "title" | "description" | "parentMessage" | "capturedAt" | "ageInMonths" | "regionId" | "milestoneId" | "tags" | "location">>,
     updatedBy: AuthorSnapshot,
   ): Promise<void> {
     if (!db) throw new Error("Firestore is not configured");
+    const firestoreChanges: Record<string, unknown> = { ...changes };
+    if (changes.capturedAt) firestoreChanges.capturedAt = Timestamp.fromDate(changes.capturedAt);
     await updateDoc(doc(db, collectionName, memoryId), {
-      ...changes,
+      ...firestoreChanges,
       updatedBy,
       updatedAt: serverTimestamp(),
     });
